@@ -3,38 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hesaplama Ofisi | Profesyonel Panel</title>
+    <title>Hesaplama Ofisi | Profesyonel</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script>
-        // --- PARA FORMATLAMA FONKSİYONU (Sihirli Dokunuş) ---
-        function formatla(sayi) {
-            // Bu fonksiyon sayıları "50.000,00" şekline çevirir
+        // --- 1. YAZARKEN NOKTA KOYAN SİHİRLİ FONKSİYON ---
+        function formatlaBu(elm) {
+            // İmleç pozisyonunu kaybetmemek için basit mantık
+            let val = elm.value;
+            
+            // Sadece rakam ve virgül kalsın (Harfleri sil)
+            val = val.replace(/[^0-9,]/g, '');
+
+            // Binlik ayracı ekle (Regex büyüsü)
+            if (val !== "") {
+                let parts = val.split(',');
+                // Tam sayı kısmına nokta ekle
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                // Virgül ve sonrasını birleştir
+                elm.value = parts.join(',');
+            } else {
+                elm.value = "";
+            }
+        }
+
+        // --- 2. HESAPLAMA İÇİN TEMİZLEYİCİ ---
+        // Bilgisayar "50.000"i anlamaz, onu "50000" yapmamız lazım hesaplarken.
+        function parayiCoz(str) {
+            if (!str) return 0;
+            // Noktaları sil, virgülü noktaya çevir (JS anlasın diye)
+            let temiz = str.replace(/\./g, '').replace(',', '.');
+            return parseFloat(temiz);
+        }
+
+        // --- 3. SONUÇ GÖSTERME FORMATI ---
+        function formatlaSonuc(sayi) {
             return sayi.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        // 1. KDV HESAPLAMA
+        // ================= HESAPLAMA MOTORLARI =================
+
+        // KDV
         function hesaplaKDV() {
-            let tutar = document.getElementById('kdvTutar').value;
-            let oran = document.getElementById('kdvOran').value;
-            if (tutar === "") { alert("Lütfen tutar giriniz."); return; }
+            let tutar = parayiCoz(document.getElementById('kdvTutar').value);
+            let oran = parseFloat(document.getElementById('kdvOran').value);
             
-            let anaPara = parseFloat(tutar);
-            let kdv = anaPara * parseFloat(oran);
-            let toplam = anaPara + kdv;
+            if (tutar === 0) { alert("Lütfen tutar giriniz."); return; }
+            
+            let kdv = tutar * oran;
+            let toplam = tutar + kdv;
 
             goster('kdvSonuc', `
-                <div class="row"><span>Matrah:</span> <span>${formatla(anaPara)} TL</span></div>
-                <div class="row"><span>KDV:</span> <span>${formatla(kdv)} TL</span></div>
+                <div class="row"><span>Matrah:</span> <span>${formatlaSonuc(tutar)} TL</span></div>
+                <div class="row"><span>KDV:</span> <span>${formatlaSonuc(kdv)} TL</span></div>
                 <div class="line"></div>
-                <div class="total">TOPLAM: ${formatla(toplam)} TL</div>
+                <div class="total">TOPLAM: ${formatlaSonuc(toplam)} TL</div>
             `);
         }
 
-        // 2. MAAŞ HESAPLAMA
+        // MAAŞ
         function hesaplaMaas() {
-            let brut = parseFloat(document.getElementById('maasBrut').value);
-            if (isNaN(brut)) { alert("Brüt maaş giriniz."); return; }
+            let brut = parayiCoz(document.getElementById('maasBrut').value);
+            if (brut === 0) { alert("Brüt maaş giriniz."); return; }
             
             let sgk = brut * 0.14;
             let issizlik = brut * 0.01;
@@ -44,41 +74,40 @@
             let net = brut - (sgk + issizlik + gelirV + damga);
 
             goster('maasSonuc', `
-                <div class="row"><span>Brüt:</span> <span>${formatla(brut)} TL</span></div>
+                <div class="row"><span>Brüt:</span> <span>${formatlaSonuc(brut)} TL</span></div>
                 <div class="line"></div>
-                <div class="row red"><span>Kesintiler:</span> <span>-${formatla(sgk+issizlik+gelirV+damga)} TL</span></div>
+                <div class="row red"><span>Kesintiler:</span> <span>-${formatlaSonuc(sgk+issizlik+gelirV+damga)} TL</span></div>
                 <div class="line"></div>
-                <div class="total blue">NET: ${formatla(net)} TL</div>
+                <div class="total blue">NET: ${formatlaSonuc(net)} TL</div>
             `);
         }
 
-        // 3. YÜZDE HESAPLAMA
+        // YÜZDE
         function hesaplaYuzde() {
-            let s = document.getElementById('yuzdeSayi').value;
-            let o = document.getElementById('yuzdeOran').value;
-            if (s === "" || o === "") return;
+            let s = parayiCoz(document.getElementById('yuzdeSayi').value);
+            let o = parayiCoz(document.getElementById('yuzdeOran').value);
+            if (s === 0 || o === 0) return;
 
-            let sonuc = (parseFloat(s) * parseFloat(o)) / 100;
-            
+            let sonuc = (s * o) / 100;
             goster('yuzdeSonuc', `
                 <div style="text-align:center; color:#666;">Sonuç:</div>
-                <div class="total orange" style="font-size:1.8rem;">${formatla(sonuc)}</div>
+                <div class="total orange" style="font-size:1.8rem;">${formatlaSonuc(sonuc)}</div>
             `);
         }
 
-        // 4. İSKONTO HESAPLAMA (YENİ - Muhasebeci İşi)
+        // İSKONTO
         function hesaplaIskonto() {
-            let fiyat = parseFloat(document.getElementById('iskontoFiyat').value);
-            let oran = parseFloat(document.getElementById('iskontoOran').value);
-            if (isNaN(fiyat)) { alert("Fiyat giriniz."); return; }
+            let fiyat = parayiCoz(document.getElementById('iskontoFiyat').value);
+            let oran = parayiCoz(document.getElementById('iskontoOran').value);
+            if (fiyat === 0) { alert("Fiyat giriniz."); return; }
 
-            let indirimTutari = (fiyat * oran) / 100;
-            let indirimliFiyat = fiyat - indirimTutari;
+            let indirim = (fiyat * oran) / 100;
+            let yeniFiyat = fiyat - indirim;
 
             goster('iskontoSonuc', `
-                <div class="row"><span>İndirim:</span> <span>-${formatla(indirimTutari)} TL</span></div>
+                <div class="row"><span>İndirim:</span> <span>-${formatlaSonuc(indirim)} TL</span></div>
                 <div class="line"></div>
-                <div class="total purple">YENİ FİYAT: ${formatla(indirimliFiyat)} TL</div>
+                <div class="total purple">YENİ FİYAT: ${formatlaSonuc(yeniFiyat)} TL</div>
             `);
         }
 
@@ -91,12 +120,10 @@
 
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
-        
         .header { text-align: center; margin-bottom: 30px; }
         .header h1 { color: #2c3e50; margin: 0; font-size: 2rem; }
         .header p { color: #95a5a6; margin-top: 5px; }
 
-        /* --- IZGARA SİSTEMİ (2x2 DÜZEN) --- */
         .container {
             display: flex;
             flex-wrap: wrap;
@@ -111,7 +138,7 @@
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            flex: 1 1 300px; /* Genişlik ayarı */
+            flex: 1 1 300px;
             max-width: 400px;
             border-top: 5px solid #ccc;
             display: flex;
@@ -122,10 +149,11 @@
         .c-kdv { border-top-color: #27ae60; }
         .c-maas { border-top-color: #2980b9; }
         .c-yuzde { border-top-color: #e67e22; }
-        .c-iskonto { border-top-color: #8e44ad; } /* Mor Renk */
+        .c-iskonto { border-top-color: #8e44ad; }
 
         h2 { font-size: 1.2rem; margin-top: 0; display: flex; align-items: center; gap: 10px; color: #34495e; }
         
+        /* Input Tipi artık 'text' (Nokta koyabilmek için) */
         input, select {
             width: 100%; padding: 12px; margin: 8px 0; 
             border: 2px solid #eaeff2; border-radius: 8px; 
@@ -135,8 +163,7 @@
         
         button {
             width: 100%; padding: 12px; margin-top: auto;
-            border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer;
-            transition: 0.2s;
+            border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; transition: 0.2s;
         }
         button:hover { opacity: 0.9; }
 
@@ -145,18 +172,15 @@
         .btn-orange { background-color: #e67e22; }
         .btn-purple { background-color: #8e44ad; }
 
-        /* Sonuç Alanı */
         .result { background: #fff; border: 1px solid #eee; padding: 15px; margin-top: 15px; border-radius: 8px; display: none; }
         .row { display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 5px; }
         .red { color: #c0392b; }
         .blue { color: #2980b9; }
-        .purple { color: #8e44ad; }
         .line { border-bottom: 1px solid #eee; margin: 10px 0; }
         .total { font-weight: 800; font-size: 1.3rem; text-align: center; color: #27ae60; }
         .total.blue { color: #2980b9; }
         .total.orange { color: #e67e22; }
         .total.purple { color: #8e44ad; }
-
     </style>
 </head>
 <body>
@@ -170,7 +194,7 @@
 
         <div class="card c-kdv">
             <h2><i class="fas fa-calculator" style="color:#27ae60;"></i> KDV Hesapla</h2>
-            <input type="number" id="kdvTutar" placeholder="Tutar (TL)">
+            <input type="text" id="kdvTutar" placeholder="Tutar (TL)" oninput="formatlaBu(this)">
             <select id="kdvOran">
                 <option value="0.20">%20 (Genel)</option>
                 <option value="0.10">%10 (Gıda)</option>
@@ -182,7 +206,7 @@
 
         <div class="card c-maas">
             <h2><i class="fas fa-wallet" style="color:#2980b9;"></i> Net Maaş</h2>
-            <input type="number" id="maasBrut" placeholder="Brüt Maaş (TL)">
+            <input type="text" id="maasBrut" placeholder="Brüt Maaş (TL)" oninput="formatlaBu(this)">
             <div style="flex-grow:1;"></div>
             <button class="btn-blue" onclick="hesaplaMaas()">HESAPLA</button>
             <div id="maasSonuc" class="result"></div>
@@ -190,16 +214,16 @@
 
         <div class="card c-yuzde">
             <h2><i class="fas fa-percent" style="color:#e67e22;"></i> Yüzde Hesapla</h2>
-            <input type="number" id="yuzdeSayi" placeholder="Sayı (Örn: 500)">
-            <input type="number" id="yuzdeOran" placeholder="Yüzde Kaçı?">
+            <input type="text" id="yuzdeSayi" placeholder="Sayı (Örn: 50.000)" oninput="formatlaBu(this)">
+            <input type="text" id="yuzdeOran" placeholder="Yüzde Kaçı?" oninput="formatlaBu(this)">
             <button class="btn-orange" onclick="hesaplaYuzde()">SONUCU BUL</button>
             <div id="yuzdeSonuc" class="result"></div>
         </div>
 
         <div class="card c-iskonto">
             <h2><i class="fas fa-tags" style="color:#8e44ad;"></i> İskonto Hesapla</h2>
-            <input type="number" id="iskontoFiyat" placeholder="Etiket Fiyatı (TL)">
-            <input type="number" id="iskontoOran" placeholder="İndirim Oranı (%)">
+            <input type="text" id="iskontoFiyat" placeholder="Etiket Fiyatı (TL)" oninput="formatlaBu(this)">
+            <input type="text" id="iskontoOran" placeholder="İndirim Oranı (%)" oninput="formatlaBu(this)">
             <button class="btn-purple" onclick="hesaplaIskonto()">İNDİRİMLİ FİYAT</button>
             <div id="iskontoSonuc" class="result"></div>
         </div>
