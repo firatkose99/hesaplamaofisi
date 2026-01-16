@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hesaplama Ofisi | Profesyonel Finans Araçları</title>
-    <meta name="description" content="KDV, Net Maaş, Tevkifat ve Kredi Hesaplama araçlarıyla finansal işlemlerinizi ücretsiz ve hızlıca yapın. Muhasebe ve kredi hesaplama ofisi.">
+    <meta name="description" content="KDV, Maaş Bordrosu, Tevkifat ve Kredi Hesaplama araçlarıyla finansal işlemlerinizi ücretsiz ve hızlıca yapın. Muhasebe ve kredi hesaplama ofisi.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script>
@@ -32,7 +32,6 @@
         }
 
         // ================= MOTORLAR =================
-        // (Kodlar aynı, sadece sayfa altına yazı eklendiği için burayı kısa tutuyorum)
         
         // 1. KDV
         function hesaplaKDV() {
@@ -44,7 +43,7 @@
             goster('kdvSonuc', `<div class="row"><span>Matrah:</span> <span>${formatlaSonuc(tutar)} TL</span></div><div class="row"><span>KDV:</span> <span>${formatlaSonuc(kdv)} TL</span></div><div class="line"></div><div class="total">TOPLAM: ${formatlaSonuc(toplam)} TL</div>`);
         }
 
-        // 2. MAAŞ
+        // 2. MAAŞ (YENİ İSİMLİ)
         function hesaplaMaas() {
             let brut = parayiCoz(document.getElementById('maasBrut').value);
             if (brut === 0) { alert("Brüt maaş giriniz."); return; }
@@ -140,30 +139,18 @@
         .total { font-weight: 800; font-size: 1.3rem; text-align: center; color: #333; }
         .red { color: #c0392b; } .blue { color: #2980b9; } .red-text { color: #c0392b; } .dark { color: #34495e; } .purple { color: #8e44ad; } .orange { color: #e67e22; }
 
-        /* --- YENİ BÖLÜM: BİLGİ KÖŞESİ (SEO & REKLAM İÇİN) --- */
+        /* SEO & REKLAM ALANI */
         .info-section {
-            background: white;
-            max-width: 1000px;
-            margin: 0 auto 50px auto;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            color: #444;
-            line-height: 1.6;
+            background: white; max-width: 1000px; margin: 0 auto 50px auto; padding: 40px;
+            border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); color: #444; line-height: 1.6;
         }
         .info-section h3 { color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-top: 30px; }
         .info-section p { margin-bottom: 15px; }
         
         /* Reklam Alanı Temsili */
         .ad-placeholder {
-            background-color: #f8f9fa;
-            border: 2px dashed #ccc;
-            color: #999;
-            text-align: center;
-            padding: 20px;
-            margin: 30px 0;
-            font-weight: bold;
-            border-radius: 8px;
+            background-color: #f8f9fa; border: 2px dashed #ccc; color: #999;
+            text-align: center; padding: 20px; margin: 30px 0; font-weight: bold; border-radius: 8px;
         }
 
         /* Footer */
@@ -191,7 +178,7 @@
         </div>
 
         <div class="card c-maas">
-            <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Maaş (Net)</h2>
+            <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Maaş Bordro Hesaplama (Brüt ➔ Net)</h2>
             <input type="text" id="maasBrut" placeholder="Brüt Maaş (TL)" oninput="formatlaBu(this)">
             <div style="flex-grow:1;"></div>
             <button class="btn-blue" onclick="hesaplaMaas()">HESAPLA</button>
@@ -239,23 +226,23 @@
         
         <div class="ad-placeholder">
             GOOGLE REKLAM ALANI (Yatay Banner)
-            </div>
+        </div>
 
         <h3>KDV Hesaplama Nasıl Yapılır?</h3>
-        <p>KDV (Katma Değer Vergisi) hesaplaması yaparken, mal veya hizmet bedeli üzerine belirlenen oran (%1, %10 veya %20) eklenir. Hesaplama Ofisi aracı ile "KDV Dahil" ve "KDV Hariç" tutarları saniyeler içinde bulabilirsiniz. Matrah üzerinden vergi hesaplaması, fatura kesim işlemlerinde büyük kolaylık sağlar.</p>
+        <p>KDV (Katma Değer Vergisi) hesaplaması yaparken, mal veya hizmet bedeli üzerine belirlenen oran (%1, %10 veya %20) eklenir. Hesaplama Ofisi aracı ile "KDV Dahil" ve "KDV Hariç" tutarları saniyeler içinde bulabilirsiniz.</p>
 
-        <h3>Net Maaş Hesaplama ve Kesintiler</h3>
-        <p>Brüt maaştan net maaşa giderken SGK Primi, İşsizlik Sigortası Fonu, Gelir Vergisi ve Damga Vergisi kesintileri yapılır. Aracımız, 2026 yılı tahmini vergi dilimlerini ve yasal oranları dikkate alarak size en yakın net maaş sonucunu verir. Muhasebe departmanları ve çalışanlar için idealdir.</p>
+        <h3>Maaş Bordrosu ve Kesintiler</h3>
+        <p>Brüt maaştan net maaşa giderken SGK Primi, İşsizlik Sigortası Fonu, Gelir Vergisi ve Damga Vergisi kesintileri yapılır. Aracımız, 2026 yılı tahmini vergi dilimlerini ve yasal oranları dikkate alarak size en yakın net maaş sonucunu verir.</p>
 
         <div class="ad-placeholder">
             GOOGLE REKLAM ALANI (Kare Banner)
-            </div>
+        </div>
 
-        <h3>Tevkifatlı Fatura Nedir?</h3>
-        <p>KDV Tevkifatı, verginin bir kısmının alıcı tarafından, diğer kısmının ise satıcı tarafından devlete ödenmesidir. Özellikle 5/10, 7/10 ve 9/10 oranları inşaat, temizlik ve nakliye sektörlerinde sıkça kullanılır. Hesaplama aracımız, faturadaki tevkifat tutarını otomatik olarak ayırır.</p>
+        <h3>Tevkifatlı Fatura Hesaplama</h3>
+        <p>KDV Tevkifatı, verginin bir kısmının alıcı tarafından, diğer kısmının ise satıcı tarafından devlete ödenmesidir. Özellikle 5/10, 7/10 ve 9/10 oranları inşaat, temizlik ve nakliye sektörlerinde sıkça kullanılır.</p>
 
-        <h3>Kredi Geri Ödeme Hesaplama</h3>
-        <p>Bankadan çekilen İhtiyaç, Konut veya Taşıt kredisinin aylık taksitlerini hesaplamak için "Anapara, Vade ve Faiz Oranı" bilgileri yeterlidir. Sistemimiz, aylık eşit taksitli ödeme planına göre toplam geri ödemeyi ve faiz yükünü hesaplar.</p>
+        <h3>Kredi Geri Ödeme Planı</h3>
+        <p>Bankadan çekilen İhtiyaç, Konut veya Taşıt kredisinin aylık taksitlerini hesaplamak için "Anapara, Vade ve Faiz Oranı" bilgileri yeterlidir.</p>
     </div>
 
     <div class="footer">
