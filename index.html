@@ -43,15 +43,30 @@
             goster('kdvSonuc', `<div class="row"><span>Matrah:</span> <span>${formatlaSonuc(tutar)} TL</span></div><div class="row"><span>KDV:</span> <span>${formatlaSonuc(kdv)} TL</span></div><div class="line"></div><div class="total">TOPLAM: ${formatlaSonuc(toplam)} TL</div>`);
         }
 
-        // 2. MAAŞ (YENİ İSİMLİ)
+        // 2. MAAŞ (DETAYLI BORDRO MODU - GERİ GELDİ!)
         function hesaplaMaas() {
             let brut = parayiCoz(document.getElementById('maasBrut').value);
             if (brut === 0) { alert("Brüt maaş giriniz."); return; }
-            let sgk = brut * 0.14; let issizlik = brut * 0.01;
+            
+            let sgk = brut * 0.14; 
+            let issizlik = brut * 0.01;
             let matrah = brut - (sgk + issizlik); 
-            let gelirV = matrah * 0.15; let damga = brut * 0.00759;
+            let gelirV = matrah * 0.15; 
+            let damga = brut * 0.00759;
+            
             let net = brut - (sgk + issizlik + gelirV + damga);
-            goster('maasSonuc', `<div class="row"><span>Brüt Maaş:</span> <span>${formatlaSonuc(brut)} TL</span></div><div class="line"></div><div class="row red"><span>Toplam Kesinti:</span> <span>-${formatlaSonuc(sgk+issizlik+gelirV+damga)} TL</span></div><div class="line"></div><div class="total blue">NET: ${formatlaSonuc(net)} TL</div>`);
+
+            // İşte burası artık tek tek döküyor:
+            goster('maasSonuc', `
+                <div class="row"><span>Brüt Maaş:</span> <span>${formatlaSonuc(brut)} TL</span></div>
+                <div class="line"></div>
+                <div class="row red"><span>SGK Primi (%14):</span> <span>-${formatlaSonuc(sgk)} TL</span></div>
+                <div class="row red"><span>İşsizlik Fonu (%1):</span> <span>-${formatlaSonuc(issizlik)} TL</span></div>
+                <div class="row red"><span>Gelir Vergisi (%15):</span> <span>-${formatlaSonuc(gelirV)} TL</span></div>
+                <div class="row red"><span>Damga Vergisi:</span> <span>-${formatlaSonuc(damga)} TL</span></div>
+                <div class="line"></div>
+                <div class="total blue">NET: ${formatlaSonuc(net)} TL</div>
+            `);
         }
 
         // 3. YÜZDE
@@ -147,13 +162,11 @@
         .info-section h3 { color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-top: 30px; }
         .info-section p { margin-bottom: 15px; }
         
-        /* Reklam Alanı Temsili */
         .ad-placeholder {
             background-color: #f8f9fa; border: 2px dashed #ccc; color: #999;
             text-align: center; padding: 20px; margin: 30px 0; font-weight: bold; border-radius: 8px;
         }
 
-        /* Footer */
         .footer { background: #2c3e50; color: white; text-align: center; padding: 20px; font-size: 0.9rem; margin-top: auto; }
     </style>
 </head>
