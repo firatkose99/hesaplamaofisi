@@ -9,18 +9,11 @@
     <script>
         // --- 1. YAZARKEN NOKTA KOYAN SİHİRLİ FONKSİYON ---
         function formatlaBu(elm) {
-            // İmleç pozisyonunu kaybetmemek için basit mantık
             let val = elm.value;
-            
-            // Sadece rakam ve virgül kalsın (Harfleri sil)
-            val = val.replace(/[^0-9,]/g, '');
-
-            // Binlik ayracı ekle (Regex büyüsü)
+            val = val.replace(/[^0-9,]/g, ''); // Sadece rakam ve virgül
             if (val !== "") {
                 let parts = val.split(',');
-                // Tam sayı kısmına nokta ekle
                 parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                // Virgül ve sonrasını birleştir
                 elm.value = parts.join(',');
             } else {
                 elm.value = "";
@@ -28,10 +21,8 @@
         }
 
         // --- 2. HESAPLAMA İÇİN TEMİZLEYİCİ ---
-        // Bilgisayar "50.000"i anlamaz, onu "50000" yapmamız lazım hesaplarken.
         function parayiCoz(str) {
             if (!str) return 0;
-            // Noktaları sil, virgülü noktaya çevir (JS anlasın diye)
             let temiz = str.replace(/\./g, '').replace(',', '.');
             return parseFloat(temiz);
         }
@@ -43,7 +34,7 @@
 
         // ================= HESAPLAMA MOTORLARI =================
 
-        // KDV
+        // KDV HESAPLAMA
         function hesaplaKDV() {
             let tutar = parayiCoz(document.getElementById('kdvTutar').value);
             let oran = parseFloat(document.getElementById('kdvOran').value);
@@ -61,28 +52,33 @@
             `);
         }
 
-        // MAAŞ
+        // MAAŞ HESAPLAMA (ARTIK DETAYLI!)
         function hesaplaMaas() {
             let brut = parayiCoz(document.getElementById('maasBrut').value);
             if (brut === 0) { alert("Brüt maaş giriniz."); return; }
             
-            let sgk = brut * 0.14;
-            let issizlik = brut * 0.01;
-            let matrah = brut - (sgk + issizlik);
-            let gelirV = matrah * 0.15; 
-            let damga = brut * 0.00759;
+            // 2024-2025 Ortalama Yasal Oranlar
+            let sgk = brut * 0.14;            // SGK Primi
+            let issizlik = brut * 0.01;       // İşsizlik Fonu
+            let matrah = brut - (sgk + issizlik); 
+            let gelirV = matrah * 0.15;       // %15 Vergi Dilimi (Varsayılan)
+            let damga = brut * 0.00759;       // Damga Vergisi
+            
             let net = brut - (sgk + issizlik + gelirV + damga);
 
             goster('maasSonuc', `
-                <div class="row"><span>Brüt:</span> <span>${formatlaSonuc(brut)} TL</span></div>
+                <div class="row"><span>Brüt Maaş:</span> <span>${formatlaSonuc(brut)} TL</span></div>
                 <div class="line"></div>
-                <div class="row red"><span>Kesintiler:</span> <span>-${formatlaSonuc(sgk+issizlik+gelirV+damga)} TL</span></div>
+                <div class="row red"><span>SGK Primi (%14):</span> <span>-${formatlaSonuc(sgk)} TL</span></div>
+                <div class="row red"><span>İşsizlik Fonu (%1):</span> <span>-${formatlaSonuc(issizlik)} TL</span></div>
+                <div class="row red"><span>Gelir Vergisi (%15):</span> <span>-${formatlaSonuc(gelirV)} TL</span></div>
+                <div class="row red"><span>Damga Vergisi:</span> <span>-${formatlaSonuc(damga)} TL</span></div>
                 <div class="line"></div>
-                <div class="total blue">NET: ${formatlaSonuc(net)} TL</div>
+                <div class="total blue">NET MAAŞ: ${formatlaSonuc(net)} TL</div>
             `);
         }
 
-        // YÜZDE
+        // YÜZDE HESAPLAMA
         function hesaplaYuzde() {
             let s = parayiCoz(document.getElementById('yuzdeSayi').value);
             let o = parayiCoz(document.getElementById('yuzdeOran').value);
@@ -95,7 +91,7 @@
             `);
         }
 
-        // İSKONTO
+        // İSKONTO HESAPLAMA
         function hesaplaIskonto() {
             let fiyat = parayiCoz(document.getElementById('iskontoFiyat').value);
             let oran = parayiCoz(document.getElementById('iskontoOran').value);
@@ -153,7 +149,6 @@
 
         h2 { font-size: 1.2rem; margin-top: 0; display: flex; align-items: center; gap: 10px; color: #34495e; }
         
-        /* Input Tipi artık 'text' (Nokta koyabilmek için) */
         input, select {
             width: 100%; padding: 12px; margin: 8px 0; 
             border: 2px solid #eaeff2; border-radius: 8px; 
@@ -173,7 +168,7 @@
         .btn-purple { background-color: #8e44ad; }
 
         .result { background: #fff; border: 1px solid #eee; padding: 15px; margin-top: 15px; border-radius: 8px; display: none; }
-        .row { display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 5px; }
+        .row { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 5px; }
         .red { color: #c0392b; }
         .blue { color: #2980b9; }
         .line { border-bottom: 1px solid #eee; margin: 10px 0; }
@@ -205,10 +200,10 @@
         </div>
 
         <div class="card c-maas">
-            <h2><i class="fas fa-wallet" style="color:#2980b9;"></i> Net Maaş</h2>
+            <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Brütten Nete Maaş Hesaplama</h2>
             <input type="text" id="maasBrut" placeholder="Brüt Maaş (TL)" oninput="formatlaBu(this)">
             <div style="flex-grow:1;"></div>
-            <button class="btn-blue" onclick="hesaplaMaas()">HESAPLA</button>
+            <button class="btn-blue" onclick="hesaplaMaas()">NETİ HESAPLA</button>
             <div id="maasSonuc" class="result"></div>
         </div>
 
