@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hesaplama Ofisi | Profesyonel Finans Araçları</title>
-    <meta name="description" content="Net Maaş, KDV, Kredi, Kira Artış Oranı ve Tevkifat Hesaplama araçlarıyla tüm finansal işlemleriniz tek adreste.">
+    <meta name="description" content="Net Maaş, KDV, Kredi, Kira Artış Oranı ve Tevkifat Hesaplama araçlarıyla tüm finansal işlemlerinizi tek adreste yapın.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script>
@@ -33,7 +33,7 @@
 
         // ================= MOTORLAR =================
         
-        // 1. MAAŞ (YILDIZ OYUNCU)
+        // 1. MAAŞ
         function hesaplaMaas() {
             let brut = parayiCoz(document.getElementById('maasBrut').value);
             if (brut === 0) { alert("Brüt maaş giriniz."); return; }
@@ -54,7 +54,7 @@
             goster('kdvSonuc', `<div class="row"><span>Matrah:</span> <span>${formatlaSonuc(tutar)} TL</span></div><div class="row"><span>KDV:</span> <span>${formatlaSonuc(kdv)} TL</span></div><div class="line"></div><div class="total">TOPLAM: ${formatlaSonuc(toplam)} TL</div>`);
         }
 
-        // 3. KREDİ (POPÜLER)
+        // 3. KREDİ
         function hesaplaKredi() {
             let tutar = parayiCoz(document.getElementById('krediTutar').value);
             let vade = parayiCoz(document.getElementById('krediVade').value);
@@ -66,24 +66,15 @@
             goster('krediSonuc', `<div class="row"><span>Taksit:</span> <span>${formatlaSonuc(taksit)} TL</span></div><div class="row"><span>Toplam:</span> <span>${formatlaSonuc(topO)} TL</span></div><div class="line"></div><div class="total red-text">FAİZ: ${formatlaSonuc(topO - tutar)} TL</div>`);
         }
 
-        // 4. KİRA ARTIŞI (YENİ - EKSİK PARÇA!)
+        // 4. KİRA ARTIŞI
         function hesaplaKira() {
             let kira = parayiCoz(document.getElementById('kiraTutar').value);
             let oran = parayiCoz(document.getElementById('kiraOran').value);
             if (kira === 0) { alert("Kira tutarı giriniz."); return; }
-            
-            // Eğer oran girilmezse TÜFE ortalaması (Örn: %65 varsayalım veya kullanıcı girsin)
-            if (oran === 0) { alert("Lütfen artış oranı giriniz."); return; }
-
+            if (oran === 0) { alert("Artış oranı giriniz."); return; }
             let artis = (kira * oran) / 100;
             let yeniKira = kira + artis;
-
-            goster('kiraSonuc', `
-                <div class="row"><span>Mevcut Kira:</span> <span>${formatlaSonuc(kira)} TL</span></div>
-                <div class="row"><span>Artış Tutarı:</span> <span>+${formatlaSonuc(artis)} TL</span></div>
-                <div class="line"></div>
-                <div class="total orange">YENİ KİRA: ${formatlaSonuc(yeniKira)} TL</div>
-            `);
+            goster('kiraSonuc', `<div class="row"><span>Mevcut Kira:</span> <span>${formatlaSonuc(kira)} TL</span></div><div class="row"><span>Artış Tutarı:</span> <span>+${formatlaSonuc(artis)} TL</span></div><div class="line"></div><div class="total orange">YENİ KİRA: ${formatlaSonuc(yeniKira)} TL</div>`);
         }
 
         // 5. TEVKİFAT
@@ -126,7 +117,7 @@
         .header h1 { margin: 0; font-size: 2.5rem; }
         .header p { opacity: 0.8; margin-top: 10px; font-size: 1.1rem; }
 
-        /* GRID DÜZENİ */
+        /* GRID */
         .container {
             display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start;
             gap: 20px; max-width: 1200px; margin: 0 auto 50px auto; padding: 0 20px;
@@ -143,7 +134,7 @@
         .c-maas { border-top-color: #2980b9; } .btn-blue { background: #2980b9; }
         .c-kdv { border-top-color: #27ae60; } .btn-green { background: #27ae60; }
         .c-kredi { border-top-color: #c0392b; } .btn-red { background: #c0392b; }
-        .c-kira { border-top-color: #d35400; } .btn-dark-orange { background: #d35400; } /* Yeni Renk */
+        .c-kira { border-top-color: #d35400; } .btn-dark-orange { background: #d35400; }
         .c-tevkifat { border-top-color: #34495e; } .btn-dark { background: #34495e; }
         .c-iskonto { border-top-color: #8e44ad; } .btn-purple { background: #8e44ad; }
         .c-yuzde { border-top-color: #e67e22; } .btn-orange { background: #e67e22; }
@@ -159,14 +150,18 @@
         .total { font-weight: 800; font-size: 1.3rem; text-align: center; color: #333; }
         .red { color: #c0392b; } .blue { color: #2980b9; } .red-text { color: #c0392b; } .dark { color: #34495e; } .purple { color: #8e44ad; } .orange { color: #e67e22; }
 
-        /* SEO & BİLGİ ALANI */
+        /* BİLGİ ALANI */
         .info-section {
             background: white; max-width: 1000px; margin: 0 auto 50px auto; padding: 40px;
             border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); color: #444; line-height: 1.6;
         }
         .info-section h3 { color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-top: 30px; }
         .ad-placeholder { background-color: #f8f9fa; border: 2px dashed #ccc; color: #999; text-align: center; padding: 20px; margin: 30px 0; font-weight: bold; border-radius: 8px; }
-        .footer { background: #2c3e50; color: white; text-align: center; padding: 20px; font-size: 0.9rem; margin-top: auto; }
+
+        /* FOOTER & İLETİŞİM */
+        .footer { background: #2c3e50; color: white; text-align: center; padding: 30px 20px; font-size: 0.9rem; margin-top: auto; }
+        .footer a { color: #3498db; text-decoration: none; font-weight: bold; margin: 0 10px; }
+        .footer a:hover { text-decoration: underline; color: #5dade2; }
     </style>
 </head>
 <body>
@@ -177,7 +172,6 @@
     </div>
 
     <div class="container">
-        
         <div class="card c-maas">
             <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Maaş Bordro (Brüt ➔ Net)</h2>
             <input type="text" id="maasBrut" placeholder="Brüt Maaş (TL)" oninput="formatlaBu(this)">
@@ -185,19 +179,13 @@
             <button class="btn-blue" onclick="hesaplaMaas()">HESAPLA</button>
             <div id="maasSonuc" class="result"></div>
         </div>
-
         <div class="card c-kdv">
             <h2><i class="fas fa-calculator" style="color:#27ae60;"></i> KDV Hesapla</h2>
             <input type="text" id="kdvTutar" placeholder="Tutar (TL)" oninput="formatlaBu(this)">
-            <select id="kdvOran">
-                <option value="0.20">%20 (Genel)</option>
-                <option value="0.10">%10 (Gıda)</option>
-                <option value="0.01">%1 (Temel)</option>
-            </select>
+            <select id="kdvOran"><option value="0.20">%20 (Genel)</option><option value="0.10">%10 (Gıda)</option><option value="0.01">%1 (Temel)</option></select>
             <button class="btn-green" onclick="hesaplaKDV()">HESAPLA</button>
             <div id="kdvSonuc" class="result"></div>
         </div>
-
         <div class="card c-kredi">
             <h2><i class="fas fa-university" style="color:#c0392b;"></i> Kredi Hesapla</h2>
             <input type="text" id="krediTutar" placeholder="Kredi Tutarı (TL)" oninput="formatlaBu(this)">
@@ -206,7 +194,6 @@
             <button class="btn-red" onclick="hesaplaKredi()">TAKSİT HESAPLA</button>
             <div id="krediSonuc" class="result"></div>
         </div>
-
         <div class="card c-kira">
             <h2><i class="fas fa-home" style="color:#d35400;"></i> Kira Artış Hesapla</h2>
             <input type="text" id="kiraTutar" placeholder="Mevcut Kira (TL)" oninput="formatlaBu(this)">
@@ -214,7 +201,6 @@
             <button class="btn-dark-orange" onclick="hesaplaKira()">YENİ KİRAYI BUL</button>
             <div id="kiraSonuc" class="result"></div>
         </div>
-
         <div class="card c-tevkifat">
             <h2><i class="fas fa-briefcase" style="color:#34495e;"></i> KDV Tevkifat</h2>
             <input type="text" id="tevkifatTutar" placeholder="Fatura Tutarı" oninput="formatlaBu(this)">
@@ -225,7 +211,6 @@
             <button class="btn-dark" onclick="hesaplaTevkifat()">TEVKİFATI AYIR</button>
             <div id="tevkifatSonuc" class="result"></div>
         </div>
-
         <div class="card c-iskonto">
             <h2><i class="fas fa-tags" style="color:#8e44ad;"></i> İskonto Hesapla</h2>
             <input type="text" id="iskontoFiyat" placeholder="Etiket Fiyatı (TL)" oninput="formatlaBu(this)">
@@ -233,7 +218,6 @@
             <button class="btn-purple" onclick="hesaplaIskonto()">İNDİRİMLİ FİYAT</button>
             <div id="iskontoSonuc" class="result"></div>
         </div>
-
         <div class="card c-yuzde">
             <h2><i class="fas fa-percent" style="color:#e67e22;"></i> Yüzde Hesapla</h2>
             <input type="text" id="yuzdeSayi" placeholder="Sayı (Örn: 50.000)" oninput="formatlaBu(this)">
@@ -241,25 +225,26 @@
             <button class="btn-orange" onclick="hesaplaYuzde()">SONUCU BUL</button>
             <div id="yuzdeSonuc" class="result"></div>
         </div>
-
     </div>
 
     <div class="info-section">
         <div class="ad-placeholder">GOOGLE REKLAM ALANI</div>
-        
         <h3>Maaş ve Kredi Hesaplamaları</h3>
         <p>Hesaplama Ofisi olarak en sık ihtiyaç duyulan finansal araçları bir araya getirdik. Brüt maaşınızdan elinize geçecek net tutarı öğrenmek veya çekeceğiniz kredinin aylık taksitlerini hesaplamak artık çok kolay.</p>
-
         <h3>Kira Artış Oranı Hesaplama</h3>
         <p>TÜFE oranlarına veya yasal sınırlara göre kira artış hesaplaması yapabilirsiniz. Mevcut kira bedelinizi ve artış oranını girerek yeni dönem kiranızı anında öğrenin.</p>
-        
         <div class="ad-placeholder">GOOGLE REKLAM ALANI</div>
-
         <h3>KDV ve Tevkifat</h3>
         <p>İşletmeler ve muhasebeciler için KDV dahil/hariç hesaplamalar ile tevkifatlı fatura işlemlerini saniyeler içinde yapabileceğiniz pratik araçlar sunuyoruz.</p>
     </div>
 
-    <div class="footer">&copy; 2026 Hesaplama Ofisi - Tüm Hakları Saklıdır.</div>
+    <div class="footer">
+        <div>&copy; 2026 Hesaplama Ofisi - Tüm Hakları Saklıdır.</div>
+        <div style="margin-top:10px;">
+            <a href="mailto:firat_kose99@hotmail.com?subject=Hesaplama Ofisi Destek">İletişim & Hata Bildir</a> | 
+            <a href="#">Gizlilik Politikası</a>
+        </div>
+    </div>
 
 </body>
 </html>
