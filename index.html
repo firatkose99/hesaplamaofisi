@@ -3,130 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hesaplama Ofisi - Tüm Araçlar</title>
+    <title>Hesaplama Ofisi | Panel Görünümü</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <script>
+        function hesaplaKDV() {
+            let tutar = document.getElementById('kdvTutar').value;
+            let oran = document.getElementById('kdvOran').value;
+            if (tutar === "") { alert("Tutar giriniz!"); return; }
+            
+            let sonuc = parseFloat(tutar) + (parseFloat(tutar) * parseFloat(oran));
+            let kutu = document.getElementById('kdvSonuc');
+            kutu.style.display = 'block';
+            kutu.innerHTML = "TOPLAM: <strong>" + sonuc.toFixed(2) + " TL</strong>";
+        }
+
+        function hesaplaMaas() {
+            let brut = document.getElementById('maasBrut').value;
+            if (brut === "") { alert("Maaş giriniz!"); return; }
+            
+            // Basit %30 kesinti örneği
+            let net = parseFloat(brut) * 0.70;
+            let kutu = document.getElementById('maasSonuc');
+            kutu.style.display = 'block';
+            kutu.innerHTML = "NET: <strong>" + net.toFixed(2) + " TL</strong>";
+        }
+
+        function hesaplaYuzde() {
+            let s = document.getElementById('yuzdeSayi').value;
+            let o = document.getElementById('yuzdeOran').value;
+            if (s === "" || o === "") return;
+
+            let sonuc = (parseFloat(s) * parseFloat(o)) / 100;
+            let kutu = document.getElementById('yuzdeSonuc');
+            kutu.style.display = 'block';
+            kutu.innerHTML = "SONUÇ: <strong>" + sonuc.toFixed(2) + "</strong>";
+        }
+    </script>
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #eef2f6;
             margin: 0;
             padding: 20px;
             color: #333;
         }
 
-        .container {
-            max-width: 600px;
+        /* Başlık Alanı */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        .header h1 { margin: 0; font-size: 2.2rem; }
+        .header p { color: #7f8c8d; margin-top: 5px; }
+
+        /* YAN YANA DİZME SİSTEMİ (FLEXBOX) */
+        .grid-container {
+            display: flex;
+            flex-wrap: wrap; /* Sığmazsa aşağı geç */
+            justify-content: center; /* Ortala */
+            gap: 20px; /* Kutular arası boşluk */
+            max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* Başlık Alanı */
-        .site-header {
-            text-align: center;
-            margin-bottom: 40px;
-            background: #2c3e50;
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        /* Kart Tasarımı (Hepsi Açık) */
+        /* Kartların Ayarları */
         .card {
             background: white;
             padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 30px; /* Kartlar arası boşluk */
-            border-left: 6px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            width: 300px; /* Her kartın genişliği */
+            flex: 1 1 300px; /* Esnek olsun, mobilde küçülsün */
+            border-top: 5px solid #ccc; /* Üstlerine renkli çizgi */
+            display: flex;
+            flex-direction: column;
         }
 
         /* Kart Renkleri */
-        .card-kdv { border-left-color: #27ae60; }
-        .card-maas { border-left-color: #2980b9; }
-        .card-yuzde { border-left-color: #e67e22; }
+        .card-green { border-top-color: #27ae60; }
+        .card-blue { border-top-color: #2980b9; }
+        .card-orange { border-top-color: #e67e22; }
 
-        h2 { margin-top: 0; color: #2c3e50; font-size: 1.4rem; display: flex; align-items: center; }
-        h2 i { margin-right: 10px; opacity: 0.8; }
-
-        /* Formlar */
+        h2 { font-size: 1.2rem; margin-top: 0; color: #34495e; display: flex; align-items: center; gap: 10px; }
+        
         input, select {
             width: 100%;
             padding: 12px;
-            margin: 8px 0 15px 0;
-            border: 2px solid #ddd;
+            margin: 10px 0;
+            border: 2px solid #dfe6e9;
             border-radius: 8px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 1rem;
         }
 
         button {
+            margin-top: auto; /* Butonu en alta it */
             width: 100%;
-            padding: 14px;
-            color: white;
+            padding: 12px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            color: white;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.2s;
         }
+        button:hover { opacity: 0.9; transform: scale(1.02); }
 
-        /* Sonuç Kutusu */
         .result {
             background: #f8f9fa;
             padding: 15px;
             margin-top: 15px;
             border-radius: 8px;
-            font-weight: bold;
-            display: none; /* Hesaplayınca açılacak */
+            text-align: center;
+            font-size: 1.1rem;
+            display: none; /* Sonuç başta gizli */
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        
-        <div class="site-header">
-            <h1 style="margin:0;">Hesaplama Ofisi 🇹🇷</h1>
-            <p style="margin:5px 0 0 0; opacity:0.8;">Tüm muhasebe araçları emrinizde.</p>
-        </div>
+    <div class="header">
+        <h1>Hesaplama Ofisi 🇹🇷</h1>
+        <p>Tüm finansal araçlarınız tek ekranda.</p>
+    </div>
 
-        <div class="card card-kdv">
-            <h2><i class="fas fa-calculator" style="color:#27ae60;"></i> KDV Hesaplama</h2>
-            <label>Tutar (TL):</label>
-            <input type="number" id="kdvTutar" placeholder="Örn: 1000">
-            
-            <label>Oran:</label>
+    <div class="grid-container">
+
+        <div class="card card-green">
+            <h2><i class="fas fa-calculator" style="color:#27ae60;"></i> KDV Hesapla</h2>
+            <input type="number" id="kdvTutar" placeholder="Tutar (TL)">
             <select id="kdvOran">
                 <option value="0.20">%20 (Genel)</option>
                 <option value="0.10">%10 (Gıda)</option>
-                <option value="0.01">%1 (Temel)</option>
             </select>
-            
-            <button style="background-color:#27ae60;" onclick="yapKDV()">HESAPLA</button>
-            <div id="sonucKDV" class="result" style="color:#27ae60;"></div>
+            <button onclick="hesaplaKDV()" style="background-color:#27ae60;">HESAPLA</button>
+            <div id="kdvSonuc" class="result" style="color:#27ae60;"></div>
         </div>
 
-        <div class="card card-maas">
-            <h2><i class="fas fa-wallet" style="color:#2980b9;"></i> Net Maaş Hesaplama</h2>
-            <label>Brüt Maaş (TL):</label>
-            <input type="number" id="maasBrut" placeholder="Örn: 30000">
-            
-            <button style="background-color:#2980b9;" onclick="yapMaas()">NETİ GÖR</button>
-            <div id="sonucMaas" class="result" style="color:#2980b9;"></div>
+        <div class="card card-blue">
+            <h2><i class="fas fa-wallet" style="color:#2980b9;"></i> Net Maaş</h2>
+            <input type="number" id="maasBrut" placeholder="Brüt Maaş (TL)">
+            <div style="flex-grow:1;"></div> <button onclick="hesaplaMaas()" style="background-color:#2980b9;">NETİ GÖR</button>
+            <div id="maasSonuc" class="result" style="color:#2980b9;"></div>
         </div>
 
-        <div class="card card-yuzde">
-            <h2><i class="fas fa-percent" style="color:#e67e22;"></i> Yüzde Hesaplama</h2>
-            <label>Sayı:</label>
-            <input type="number" id="yuzdeSayi" placeholder="Örn: 500">
-            <label>Yüzde Kaçı?</label>
-            <input type="number" id="yuzdeOran" placeholder="Örn: 20">
-            
-            <button style="background-color:#e67e22;" onclick="yapYuzde()">SONUCU BUL</button>
-            <div id="sonucYuzde" class="result" style="color:#e67e22;"></div>
+        <div class="card card-orange">
+            <h2><i class="fas fa-percent" style="color:#e67e22;"></i> Yüzde Bul</h2>
+            <input type="number" id="yuzdeSayi" placeholder="Sayı (Örn: 500)">
+            <input type="number" id="yuzdeOran" placeholder="Yüzde Kaçı?">
+            <button onclick="hesaplaYuzde()" style="background-color:#e67e22;">HESAPLA</button>
+            <div id="yuzdeSonuc" class="result" style="color:#e67e22;"></div>
         </div>
 
     </div>
 
-    <script>
-        //
+</body>
+</html>
