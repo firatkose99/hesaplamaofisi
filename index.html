@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hesaplama Ofisi | Profesyonel Finans Araçları</title>
-    <meta name="description" content="KDV, Maaş Bordrosu, Tevkifat ve Kredi Hesaplama araçlarıyla finansal işlemlerinizi ücretsiz ve hızlıca yapın. Muhasebe ve kredi hesaplama ofisi.">
+    <meta name="description" content="Net Maaş, KDV, Kredi, Kira Artış Oranı ve Tevkifat Hesaplama araçlarıyla tüm finansal işlemleriniz tek adreste.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script>
@@ -33,7 +33,18 @@
 
         // ================= MOTORLAR =================
         
-        // 1. KDV
+        // 1. MAAŞ (YILDIZ OYUNCU)
+        function hesaplaMaas() {
+            let brut = parayiCoz(document.getElementById('maasBrut').value);
+            if (brut === 0) { alert("Brüt maaş giriniz."); return; }
+            let sgk = brut * 0.14; let issizlik = brut * 0.01;
+            let matrah = brut - (sgk + issizlik); 
+            let gelirV = matrah * 0.15; let damga = brut * 0.00759;
+            let net = brut - (sgk + issizlik + gelirV + damga);
+            goster('maasSonuc', `<div class="row"><span>Brüt Maaş:</span> <span>${formatlaSonuc(brut)} TL</span></div><div class="line"></div><div class="row red"><span>SGK Primi (%14):</span> <span>-${formatlaSonuc(sgk)} TL</span></div><div class="row red"><span>İşsizlik (%1):</span> <span>-${formatlaSonuc(issizlik)} TL</span></div><div class="row red"><span>Gelir Vergisi (%15):</span> <span>-${formatlaSonuc(gelirV)} TL</span></div><div class="row red"><span>Damga Vergisi:</span> <span>-${formatlaSonuc(damga)} TL</span></div><div class="line"></div><div class="total blue">NET: ${formatlaSonuc(net)} TL</div>`);
+        }
+
+        // 2. KDV
         function hesaplaKDV() {
             let tutar = parayiCoz(document.getElementById('kdvTutar').value);
             let oran = parseFloat(document.getElementById('kdvOran').value);
@@ -43,48 +54,36 @@
             goster('kdvSonuc', `<div class="row"><span>Matrah:</span> <span>${formatlaSonuc(tutar)} TL</span></div><div class="row"><span>KDV:</span> <span>${formatlaSonuc(kdv)} TL</span></div><div class="line"></div><div class="total">TOPLAM: ${formatlaSonuc(toplam)} TL</div>`);
         }
 
-        // 2. MAAŞ (DETAYLI BORDRO MODU - GERİ GELDİ!)
-        function hesaplaMaas() {
-            let brut = parayiCoz(document.getElementById('maasBrut').value);
-            if (brut === 0) { alert("Brüt maaş giriniz."); return; }
-            
-            let sgk = brut * 0.14; 
-            let issizlik = brut * 0.01;
-            let matrah = brut - (sgk + issizlik); 
-            let gelirV = matrah * 0.15; 
-            let damga = brut * 0.00759;
-            
-            let net = brut - (sgk + issizlik + gelirV + damga);
+        // 3. KREDİ (POPÜLER)
+        function hesaplaKredi() {
+            let tutar = parayiCoz(document.getElementById('krediTutar').value);
+            let vade = parayiCoz(document.getElementById('krediVade').value);
+            let faiz = parayiCoz(document.getElementById('krediFaiz').value);
+            if (tutar===0 || vade===0 || faiz===0) { alert("Tüm alanları doldurun."); return; }
+            let ayF = faiz/100;
+            let taksit = (tutar * ayF * Math.pow((1+ayF), vade)) / (Math.pow((1+ayF), vade) - 1);
+            let topO = taksit * vade;
+            goster('krediSonuc', `<div class="row"><span>Taksit:</span> <span>${formatlaSonuc(taksit)} TL</span></div><div class="row"><span>Toplam:</span> <span>${formatlaSonuc(topO)} TL</span></div><div class="line"></div><div class="total red-text">FAİZ: ${formatlaSonuc(topO - tutar)} TL</div>`);
+        }
 
-            // İşte burası artık tek tek döküyor:
-            goster('maasSonuc', `
-                <div class="row"><span>Brüt Maaş:</span> <span>${formatlaSonuc(brut)} TL</span></div>
+        // 4. KİRA ARTIŞI (YENİ - EKSİK PARÇA!)
+        function hesaplaKira() {
+            let kira = parayiCoz(document.getElementById('kiraTutar').value);
+            let oran = parayiCoz(document.getElementById('kiraOran').value);
+            if (kira === 0) { alert("Kira tutarı giriniz."); return; }
+            
+            // Eğer oran girilmezse TÜFE ortalaması (Örn: %65 varsayalım veya kullanıcı girsin)
+            if (oran === 0) { alert("Lütfen artış oranı giriniz."); return; }
+
+            let artis = (kira * oran) / 100;
+            let yeniKira = kira + artis;
+
+            goster('kiraSonuc', `
+                <div class="row"><span>Mevcut Kira:</span> <span>${formatlaSonuc(kira)} TL</span></div>
+                <div class="row"><span>Artış Tutarı:</span> <span>+${formatlaSonuc(artis)} TL</span></div>
                 <div class="line"></div>
-                <div class="row red"><span>SGK Primi (%14):</span> <span>-${formatlaSonuc(sgk)} TL</span></div>
-                <div class="row red"><span>İşsizlik Fonu (%1):</span> <span>-${formatlaSonuc(issizlik)} TL</span></div>
-                <div class="row red"><span>Gelir Vergisi (%15):</span> <span>-${formatlaSonuc(gelirV)} TL</span></div>
-                <div class="row red"><span>Damga Vergisi:</span> <span>-${formatlaSonuc(damga)} TL</span></div>
-                <div class="line"></div>
-                <div class="total blue">NET: ${formatlaSonuc(net)} TL</div>
+                <div class="total orange">YENİ KİRA: ${formatlaSonuc(yeniKira)} TL</div>
             `);
-        }
-
-        // 3. YÜZDE
-        function hesaplaYuzde() {
-            let s = parayiCoz(document.getElementById('yuzdeSayi').value);
-            let o = parayiCoz(document.getElementById('yuzdeOran').value);
-            if (s === 0 || o === 0) return;
-            let sonuc = (s * o) / 100;
-            goster('yuzdeSonuc', `<div style="text-align:center; color:#666;">Sonuç:</div><div class="total orange" style="font-size:1.8rem;">${formatlaSonuc(sonuc)}</div>`);
-        }
-
-        // 4. İSKONTO
-        function hesaplaIskonto() {
-            let fiyat = parayiCoz(document.getElementById('iskontoFiyat').value);
-            let oran = parayiCoz(document.getElementById('iskontoOran').value);
-            if (fiyat === 0) { alert("Fiyat giriniz."); return; }
-            let indirim = (fiyat * oran) / 100; let yeni = fiyat - indirim;
-            goster('iskontoSonuc', `<div class="row"><span>İndirim:</span> <span>-${formatlaSonuc(indirim)} TL</span></div><div class="line"></div><div class="total purple">YENİ FİYAT: ${formatlaSonuc(yeni)} TL</div>`);
         }
 
         // 5. TEVKİFAT
@@ -97,16 +96,22 @@
             goster('tevkifatSonuc', `<div class="row"><span>KDV:</span> <span>${formatlaSonuc(hKDV)} TL</span></div><div class="row red"><span>Tevkifat:</span> <span>-${formatlaSonuc(tTutari)} TL</span></div><div class="line"></div><div class="total dark">TOPLAM: ${formatlaSonuc(top)} TL</div>`);
         }
 
-        // 6. KREDİ
-        function hesaplaKredi() {
-            let tutar = parayiCoz(document.getElementById('krediTutar').value);
-            let vade = parayiCoz(document.getElementById('krediVade').value);
-            let faiz = parayiCoz(document.getElementById('krediFaiz').value);
-            if (tutar===0 || vade===0 || faiz===0) { alert("Tüm alanları doldurun."); return; }
-            let ayF = faiz/100;
-            let taksit = (tutar * ayF * Math.pow((1+ayF), vade)) / (Math.pow((1+ayF), vade) - 1);
-            let topO = taksit * vade;
-            goster('krediSonuc', `<div class="row"><span>Taksit:</span> <span>${formatlaSonuc(taksit)} TL</span></div><div class="row"><span>Toplam:</span> <span>${formatlaSonuc(topO)} TL</span></div><div class="line"></div><div class="total red-text">FAİZ: ${formatlaSonuc(topO - tutar)} TL</div>`);
+        // 6. İSKONTO
+        function hesaplaIskonto() {
+            let fiyat = parayiCoz(document.getElementById('iskontoFiyat').value);
+            let oran = parayiCoz(document.getElementById('iskontoOran').value);
+            if (fiyat === 0) { alert("Fiyat giriniz."); return; }
+            let indirim = (fiyat * oran) / 100; let yeni = fiyat - indirim;
+            goster('iskontoSonuc', `<div class="row"><span>İndirim:</span> <span>-${formatlaSonuc(indirim)} TL</span></div><div class="line"></div><div class="total purple">YENİ FİYAT: ${formatlaSonuc(yeni)} TL</div>`);
+        }
+
+        // 7. YÜZDE
+        function hesaplaYuzde() {
+            let s = parayiCoz(document.getElementById('yuzdeSayi').value);
+            let o = parayiCoz(document.getElementById('yuzdeOran').value);
+            if (s === 0 || o === 0) return;
+            let sonuc = (s * o) / 100;
+            goster('yuzdeSonuc', `<div style="text-align:center; color:#666;">Sonuç:</div><div class="total orange" style="font-size:1.8rem;">${formatlaSonuc(sonuc)}</div>`);
         }
 
         function goster(id, html) {
@@ -117,12 +122,11 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #333; }
         
-        /* HEADER */
         .header { background: #2c3e50; color: white; padding: 40px 20px; text-align: center; margin-bottom: 30px; }
         .header h1 { margin: 0; font-size: 2.5rem; }
         .header p { opacity: 0.8; margin-top: 10px; font-size: 1.1rem; }
 
-        /* GRID */
+        /* GRID DÜZENİ */
         .container {
             display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start;
             gap: 20px; max-width: 1200px; margin: 0 auto 50px auto; padding: 0 20px;
@@ -135,13 +139,14 @@
             border-top: 5px solid #ccc; display: flex; flex-direction: column;
         }
 
-        /* Renkler & Buttonlar */
-        .c-kdv { border-top-color: #27ae60; } .btn-green { background: #27ae60; }
+        /* Renkler */
         .c-maas { border-top-color: #2980b9; } .btn-blue { background: #2980b9; }
-        .c-yuzde { border-top-color: #e67e22; } .btn-orange { background: #e67e22; }
-        .c-iskonto { border-top-color: #8e44ad; } .btn-purple { background: #8e44ad; }
-        .c-tevkifat { border-top-color: #34495e; } .btn-dark { background: #34495e; }
+        .c-kdv { border-top-color: #27ae60; } .btn-green { background: #27ae60; }
         .c-kredi { border-top-color: #c0392b; } .btn-red { background: #c0392b; }
+        .c-kira { border-top-color: #d35400; } .btn-dark-orange { background: #d35400; } /* Yeni Renk */
+        .c-tevkifat { border-top-color: #34495e; } .btn-dark { background: #34495e; }
+        .c-iskonto { border-top-color: #8e44ad; } .btn-purple { background: #8e44ad; }
+        .c-yuzde { border-top-color: #e67e22; } .btn-orange { background: #e67e22; }
 
         h2 { font-size: 1.2rem; margin-top: 0; display: flex; align-items: center; gap: 10px; color: #34495e; }
         input, select { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #eaeff2; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
@@ -154,19 +159,13 @@
         .total { font-weight: 800; font-size: 1.3rem; text-align: center; color: #333; }
         .red { color: #c0392b; } .blue { color: #2980b9; } .red-text { color: #c0392b; } .dark { color: #34495e; } .purple { color: #8e44ad; } .orange { color: #e67e22; }
 
-        /* SEO & REKLAM ALANI */
+        /* SEO & BİLGİ ALANI */
         .info-section {
             background: white; max-width: 1000px; margin: 0 auto 50px auto; padding: 40px;
             border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); color: #444; line-height: 1.6;
         }
         .info-section h3 { color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-top: 30px; }
-        .info-section p { margin-bottom: 15px; }
-        
-        .ad-placeholder {
-            background-color: #f8f9fa; border: 2px dashed #ccc; color: #999;
-            text-align: center; padding: 20px; margin: 30px 0; font-weight: bold; border-radius: 8px;
-        }
-
+        .ad-placeholder { background-color: #f8f9fa; border: 2px dashed #ccc; color: #999; text-align: center; padding: 20px; margin: 30px 0; font-weight: bold; border-radius: 8px; }
         .footer { background: #2c3e50; color: white; text-align: center; padding: 20px; font-size: 0.9rem; margin-top: auto; }
     </style>
 </head>
@@ -174,10 +173,19 @@
 
     <div class="header">
         <h1>Hesaplama Ofisi 🇹🇷</h1>
-        <p>Tüm Finansal ve Muhasebe İşlemleriniz Tek Ekranda</p>
+        <p>Profesyonel Finans ve Hesaplama Çözümleri</p>
     </div>
 
     <div class="container">
+        
+        <div class="card c-maas">
+            <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Maaş Bordro (Brüt ➔ Net)</h2>
+            <input type="text" id="maasBrut" placeholder="Brüt Maaş (TL)" oninput="formatlaBu(this)">
+            <div style="flex-grow:1;"></div>
+            <button class="btn-blue" onclick="hesaplaMaas()">HESAPLA</button>
+            <div id="maasSonuc" class="result"></div>
+        </div>
+
         <div class="card c-kdv">
             <h2><i class="fas fa-calculator" style="color:#27ae60;"></i> KDV Hesapla</h2>
             <input type="text" id="kdvTutar" placeholder="Tutar (TL)" oninput="formatlaBu(this)">
@@ -190,28 +198,21 @@
             <div id="kdvSonuc" class="result"></div>
         </div>
 
-        <div class="card c-maas">
-            <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Maaş Bordro Hesaplama (Brüt ➔ Net)</h2>
-            <input type="text" id="maasBrut" placeholder="Brüt Maaş (TL)" oninput="formatlaBu(this)">
-            <div style="flex-grow:1;"></div>
-            <button class="btn-blue" onclick="hesaplaMaas()">HESAPLA</button>
-            <div id="maasSonuc" class="result"></div>
+        <div class="card c-kredi">
+            <h2><i class="fas fa-university" style="color:#c0392b;"></i> Kredi Hesapla</h2>
+            <input type="text" id="krediTutar" placeholder="Kredi Tutarı (TL)" oninput="formatlaBu(this)">
+            <input type="text" id="krediVade" placeholder="Vade (Ay Sayısı)" oninput="formatlaBu(this)">
+            <input type="text" id="krediFaiz" placeholder="Aylık Faiz (Örn: 3,50)" oninput="formatlaBu(this)">
+            <button class="btn-red" onclick="hesaplaKredi()">TAKSİT HESAPLA</button>
+            <div id="krediSonuc" class="result"></div>
         </div>
 
-        <div class="card c-yuzde">
-            <h2><i class="fas fa-percent" style="color:#e67e22;"></i> Yüzde Hesapla</h2>
-            <input type="text" id="yuzdeSayi" placeholder="Sayı (Örn: 50.000)" oninput="formatlaBu(this)">
-            <input type="text" id="yuzdeOran" placeholder="Yüzde Kaçı?" oninput="formatlaBu(this)">
-            <button class="btn-orange" onclick="hesaplaYuzde()">SONUCU BUL</button>
-            <div id="yuzdeSonuc" class="result"></div>
-        </div>
-
-        <div class="card c-iskonto">
-            <h2><i class="fas fa-tags" style="color:#8e44ad;"></i> İskonto Hesapla</h2>
-            <input type="text" id="iskontoFiyat" placeholder="Etiket Fiyatı (TL)" oninput="formatlaBu(this)">
-            <input type="text" id="iskontoOran" placeholder="İndirim Oranı (%)" oninput="formatlaBu(this)">
-            <button class="btn-purple" onclick="hesaplaIskonto()">İNDİRİMLİ FİYAT</button>
-            <div id="iskontoSonuc" class="result"></div>
+        <div class="card c-kira">
+            <h2><i class="fas fa-home" style="color:#d35400;"></i> Kira Artış Hesapla</h2>
+            <input type="text" id="kiraTutar" placeholder="Mevcut Kira (TL)" oninput="formatlaBu(this)">
+            <input type="text" id="kiraOran" placeholder="Artış Oranı (%)" oninput="formatlaBu(this)">
+            <button class="btn-dark-orange" onclick="hesaplaKira()">YENİ KİRAYI BUL</button>
+            <div id="kiraSonuc" class="result"></div>
         </div>
 
         <div class="card c-tevkifat">
@@ -225,42 +226,40 @@
             <div id="tevkifatSonuc" class="result"></div>
         </div>
 
-        <div class="card c-kredi">
-            <h2><i class="fas fa-university" style="color:#c0392b;"></i> Kredi Hesapla</h2>
-            <input type="text" id="krediTutar" placeholder="Kredi Tutarı (TL)" oninput="formatlaBu(this)">
-            <input type="text" id="krediVade" placeholder="Vade (Ay Sayısı)" oninput="formatlaBu(this)">
-            <input type="text" id="krediFaiz" placeholder="Aylık Faiz (Örn: 3,50)" oninput="formatlaBu(this)">
-            <button class="btn-red" onclick="hesaplaKredi()">TAKSİT HESAPLA</button>
-            <div id="krediSonuc" class="result"></div>
+        <div class="card c-iskonto">
+            <h2><i class="fas fa-tags" style="color:#8e44ad;"></i> İskonto Hesapla</h2>
+            <input type="text" id="iskontoFiyat" placeholder="Etiket Fiyatı (TL)" oninput="formatlaBu(this)">
+            <input type="text" id="iskontoOran" placeholder="İndirim Oranı (%)" oninput="formatlaBu(this)">
+            <button class="btn-purple" onclick="hesaplaIskonto()">İNDİRİMLİ FİYAT</button>
+            <div id="iskontoSonuc" class="result"></div>
         </div>
+
+        <div class="card c-yuzde">
+            <h2><i class="fas fa-percent" style="color:#e67e22;"></i> Yüzde Hesapla</h2>
+            <input type="text" id="yuzdeSayi" placeholder="Sayı (Örn: 50.000)" oninput="formatlaBu(this)">
+            <input type="text" id="yuzdeOran" placeholder="Yüzde Kaçı?" oninput="formatlaBu(this)">
+            <button class="btn-orange" onclick="hesaplaYuzde()">SONUCU BUL</button>
+            <div id="yuzdeSonuc" class="result"></div>
+        </div>
+
     </div>
 
     <div class="info-section">
+        <div class="ad-placeholder">GOOGLE REKLAM ALANI</div>
         
-        <div class="ad-placeholder">
-            GOOGLE REKLAM ALANI (Yatay Banner)
-        </div>
+        <h3>Maaş ve Kredi Hesaplamaları</h3>
+        <p>Hesaplama Ofisi olarak en sık ihtiyaç duyulan finansal araçları bir araya getirdik. Brüt maaşınızdan elinize geçecek net tutarı öğrenmek veya çekeceğiniz kredinin aylık taksitlerini hesaplamak artık çok kolay.</p>
 
-        <h3>KDV Hesaplama Nasıl Yapılır?</h3>
-        <p>KDV (Katma Değer Vergisi) hesaplaması yaparken, mal veya hizmet bedeli üzerine belirlenen oran (%1, %10 veya %20) eklenir. Hesaplama Ofisi aracı ile "KDV Dahil" ve "KDV Hariç" tutarları saniyeler içinde bulabilirsiniz.</p>
+        <h3>Kira Artış Oranı Hesaplama</h3>
+        <p>TÜFE oranlarına veya yasal sınırlara göre kira artış hesaplaması yapabilirsiniz. Mevcut kira bedelinizi ve artış oranını girerek yeni dönem kiranızı anında öğrenin.</p>
+        
+        <div class="ad-placeholder">GOOGLE REKLAM ALANI</div>
 
-        <h3>Maaş Bordrosu ve Kesintiler</h3>
-        <p>Brüt maaştan net maaşa giderken SGK Primi, İşsizlik Sigortası Fonu, Gelir Vergisi ve Damga Vergisi kesintileri yapılır. Aracımız, 2026 yılı tahmini vergi dilimlerini ve yasal oranları dikkate alarak size en yakın net maaş sonucunu verir.</p>
-
-        <div class="ad-placeholder">
-            GOOGLE REKLAM ALANI (Kare Banner)
-        </div>
-
-        <h3>Tevkifatlı Fatura Hesaplama</h3>
-        <p>KDV Tevkifatı, verginin bir kısmının alıcı tarafından, diğer kısmının ise satıcı tarafından devlete ödenmesidir. Özellikle 5/10, 7/10 ve 9/10 oranları inşaat, temizlik ve nakliye sektörlerinde sıkça kullanılır.</p>
-
-        <h3>Kredi Geri Ödeme Planı</h3>
-        <p>Bankadan çekilen İhtiyaç, Konut veya Taşıt kredisinin aylık taksitlerini hesaplamak için "Anapara, Vade ve Faiz Oranı" bilgileri yeterlidir.</p>
+        <h3>KDV ve Tevkifat</h3>
+        <p>İşletmeler ve muhasebeciler için KDV dahil/hariç hesaplamalar ile tevkifatlı fatura işlemlerini saniyeler içinde yapabileceğiniz pratik araçlar sunuyoruz.</p>
     </div>
 
-    <div class="footer">
-        &copy; 2026 Hesaplama Ofisi - Tüm Hakları Saklıdır.
-    </div>
+    <div class="footer">&copy; 2026 Hesaplama Ofisi - Tüm Hakları Saklıdır.</div>
 
 </body>
 </html>
