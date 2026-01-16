@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hesaplama Ofisi | Profesyonel</title>
+    <title>Hesaplama Ofisi | Muhasebe Pro</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script>
-        // --- 1. YAZARKEN NOKTA KOYAN SİHİRLİ FONKSİYON ---
+        // --- FORMATLAMA SİHİRBAZLARI ---
         function formatlaBu(elm) {
             let val = elm.value;
-            val = val.replace(/[^0-9,]/g, ''); // Sadece rakam ve virgül
+            val = val.replace(/[^0-9,]/g, '');
             if (val !== "") {
                 let parts = val.split(',');
                 parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -20,26 +20,24 @@
             }
         }
 
-        // --- 2. HESAPLAMA İÇİN TEMİZLEYİCİ ---
         function parayiCoz(str) {
             if (!str) return 0;
             let temiz = str.replace(/\./g, '').replace(',', '.');
             return parseFloat(temiz);
         }
 
-        // --- 3. SONUÇ GÖSTERME FORMATI ---
         function formatlaSonuc(sayi) {
             return sayi.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        // ================= HESAPLAMA MOTORLARI =================
+        // ================= MOTORLAR =================
 
-        // KDV HESAPLAMA
+        // 1. KDV
         function hesaplaKDV() {
             let tutar = parayiCoz(document.getElementById('kdvTutar').value);
             let oran = parseFloat(document.getElementById('kdvOran').value);
             
-            if (tutar === 0) { alert("Lütfen tutar giriniz."); return; }
+            if (tutar === 0) { alert("Tutar giriniz."); return; }
             
             let kdv = tutar * oran;
             let toplam = tutar + kdv;
@@ -52,17 +50,17 @@
             `);
         }
 
-        // MAAŞ HESAPLAMA (ARTIK DETAYLI!)
+        // 2. MAAŞ (Brütten Nete - Detaylı)
         function hesaplaMaas() {
             let brut = parayiCoz(document.getElementById('maasBrut').value);
             if (brut === 0) { alert("Brüt maaş giriniz."); return; }
             
-            // 2024-2025 Ortalama Yasal Oranlar
-            let sgk = brut * 0.14;            // SGK Primi
-            let issizlik = brut * 0.01;       // İşsizlik Fonu
+            // Oranlar
+            let sgk = brut * 0.14;
+            let issizlik = brut * 0.01;
             let matrah = brut - (sgk + issizlik); 
-            let gelirV = matrah * 0.15;       // %15 Vergi Dilimi (Varsayılan)
-            let damga = brut * 0.00759;       // Damga Vergisi
+            let gelirV = matrah * 0.15; // %15 Varsayılan
+            let damga = brut * 0.00759;
             
             let net = brut - (sgk + issizlik + gelirV + damga);
 
@@ -74,11 +72,11 @@
                 <div class="row red"><span>Gelir Vergisi (%15):</span> <span>-${formatlaSonuc(gelirV)} TL</span></div>
                 <div class="row red"><span>Damga Vergisi:</span> <span>-${formatlaSonuc(damga)} TL</span></div>
                 <div class="line"></div>
-                <div class="total blue">NET MAAŞ: ${formatlaSonuc(net)} TL</div>
+                <div class="total blue">NET: ${formatlaSonuc(net)} TL</div>
             `);
         }
 
-        // YÜZDE HESAPLAMA
+        // 3. YÜZDE
         function hesaplaYuzde() {
             let s = parayiCoz(document.getElementById('yuzdeSayi').value);
             let o = parayiCoz(document.getElementById('yuzdeOran').value);
@@ -91,7 +89,7 @@
             `);
         }
 
-        // İSKONTO HESAPLAMA
+        // 4. İSKONTO
         function hesaplaIskonto() {
             let fiyat = parayiCoz(document.getElementById('iskontoFiyat').value);
             let oran = parayiCoz(document.getElementById('iskontoOran').value);
@@ -104,6 +102,29 @@
                 <div class="row"><span>İndirim:</span> <span>-${formatlaSonuc(indirim)} TL</span></div>
                 <div class="line"></div>
                 <div class="total purple">YENİ FİYAT: ${formatlaSonuc(yeniFiyat)} TL</div>
+            `);
+        }
+
+        // 5. KDV TEVKİFAT (YENİ - MUHASEBECİ ÖZEL)
+        function hesaplaTevkifat() {
+            let tutar = parayiCoz(document.getElementById('tevkifatTutar').value);
+            let kdvOrani = parseFloat(document.getElementById('tevkifatKdv').value);
+            let tevkifatOrani = parseFloat(document.getElementById('tevkifatOran').value);
+            
+            if (tutar === 0) { alert("Tutar giriniz."); return; }
+
+            // Hesaplamalar
+            let hesaplananKDV = tutar * kdvOrani; // Normal KDV
+            let tevkifatTutari = hesaplananKDV * tevkifatOrani; // Alıcının ödeyeceği KDV
+            let beyanKDV = hesaplananKDV - tevkifatTutari; // Satıcının alacağı KDV
+            let toplamTahsilat = tutar + beyanKDV; // Fatura Toplamı
+
+            goster('tevkifatSonuc', `
+                <div class="row"><span>Hesaplanan KDV:</span> <span>${formatlaSonuc(hesaplananKDV)} TL</span></div>
+                <div class="row red"><span>Tevkifat (Kesinti):</span> <span>-${formatlaSonuc(tevkifatTutari)} TL</span></div>
+                <div class="row blue"><span>Tahsil Edilecek KDV:</span> <span>${formatlaSonuc(beyanKDV)} TL</span></div>
+                <div class="line"></div>
+                <div class="total dark">GENEL TOPLAM: ${formatlaSonuc(toplamTahsilat)} TL</div>
             `);
         }
 
@@ -120,12 +141,13 @@
         .header h1 { color: #2c3e50; margin: 0; font-size: 2rem; }
         .header p { color: #95a5a6; margin-top: 5px; }
 
+        /* GRID SİSTEMİ */
         .container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
@@ -135,7 +157,7 @@
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             flex: 1 1 300px;
-            max-width: 400px;
+            max-width: 380px;
             border-top: 5px solid #ccc;
             display: flex;
             flex-direction: column;
@@ -146,13 +168,14 @@
         .c-maas { border-top-color: #2980b9; }
         .c-yuzde { border-top-color: #e67e22; }
         .c-iskonto { border-top-color: #8e44ad; }
+        .c-tevkifat { border-top-color: #34495e; } /* Koyu Renk */
 
-        h2 { font-size: 1.2rem; margin-top: 0; display: flex; align-items: center; gap: 10px; color: #34495e; }
+        h2 { font-size: 1.1rem; margin-top: 0; display: flex; align-items: center; gap: 10px; color: #34495e; }
         
         input, select {
             width: 100%; padding: 12px; margin: 8px 0; 
             border: 2px solid #eaeff2; border-radius: 8px; 
-            font-size: 1rem; box-sizing: border-box;
+            font-size: 0.95rem; box-sizing: border-box;
         }
         input:focus { border-color: #3498db; outline: none; }
         
@@ -166,16 +189,18 @@
         .btn-blue { background-color: #2980b9; }
         .btn-orange { background-color: #e67e22; }
         .btn-purple { background-color: #8e44ad; }
+        .btn-dark { background-color: #34495e; }
 
         .result { background: #fff; border: 1px solid #eee; padding: 15px; margin-top: 15px; border-radius: 8px; display: none; }
-        .row { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 5px; }
+        .row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px; }
         .red { color: #c0392b; }
         .blue { color: #2980b9; }
         .line { border-bottom: 1px solid #eee; margin: 10px 0; }
-        .total { font-weight: 800; font-size: 1.3rem; text-align: center; color: #27ae60; }
+        .total { font-weight: 800; font-size: 1.2rem; text-align: center; color: #27ae60; }
         .total.blue { color: #2980b9; }
         .total.orange { color: #e67e22; }
         .total.purple { color: #8e44ad; }
+        .total.dark { color: #34495e; }
     </style>
 </head>
 <body>
@@ -200,7 +225,7 @@
         </div>
 
         <div class="card c-maas">
-            <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Brütten Nete Maaş Hesaplama</h2>
+            <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Brütten Nete Maaş</h2>
             <input type="text" id="maasBrut" placeholder="Brüt Maaş (TL)" oninput="formatlaBu(this)">
             <div style="flex-grow:1;"></div>
             <button class="btn-blue" onclick="hesaplaMaas()">NETİ HESAPLA</button>
@@ -221,6 +246,25 @@
             <input type="text" id="iskontoOran" placeholder="İndirim Oranı (%)" oninput="formatlaBu(this)">
             <button class="btn-purple" onclick="hesaplaIskonto()">İNDİRİMLİ FİYAT</button>
             <div id="iskontoSonuc" class="result"></div>
+        </div>
+
+        <div class="card c-tevkifat">
+            <h2><i class="fas fa-briefcase" style="color:#34495e;"></i> KDV Tevkifatı</h2>
+            <input type="text" id="tevkifatTutar" placeholder="Fatura Tutarı (KDV Hariç)" oninput="formatlaBu(this)">
+            <div style="display:flex; gap:10px;">
+                <select id="tevkifatKdv">
+                    <option value="0.20">%20 KDV</option>
+                    <option value="0.10">%10 KDV</option>
+                </select>
+                <select id="tevkifatOran">
+                    <option value="0.5">5/10</option>
+                    <option value="0.7">7/10</option>
+                    <option value="0.9">9/10</option>
+                    <option value="0.2">2/10</option>
+                </select>
+            </div>
+            <button class="btn-dark" onclick="hesaplaTevkifat()">TEVKİFATI AYIR</button>
+            <div id="tevkifatSonuc" class="result"></div>
         </div>
 
     </div>
