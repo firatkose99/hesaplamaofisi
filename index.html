@@ -3,130 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KDV Hesaplama - Hesaplama Ofisi</title>
+    <title>Hesaplama Ofisi | Profesyonel Araçlar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #eef2f3;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background-color: #eef2f6;
             margin: 0;
+            padding: 0;
+            color: #333;
         }
-        .calculator-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
+
+        /* Üst Menü */
+        .header {
+            background-color: #1a252f;
+            padding: 1rem;
             text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        h1 { color: #2c3e50; margin-bottom: 20px; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; margin-bottom: 5px; color: #7f8c8d; font-weight: bold; }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #ecf0f1;
+            padding: 12px 20px;
+            margin: 0 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-btn:hover { background: rgba(255,255,255,0.2); }
+        .nav-btn.active { background: #3498db; color: white; transform: scale(1.05); }
+        .nav-btn i { margin-right: 8px; }
+
+        /* Ana Kutu */
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        .tab-content { display: none; padding: 30px; animation: fadeEffect 0.4s; }
+        .tab-content.active-tab { display: block; }
+
+        h2 { margin-top: 0; color: #2c3e50; font-size: 1.5rem; border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; margin-bottom: 25px; }
+
+        /* Form Elemanları */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #7f8c8d; font-size: 0.9rem; }
+        
         input, select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
+            border: 2px solid #dfe6e9;
             border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box; /* Kutunun taşmasını engeller */
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: 0.3s;
         }
-        button {
+        input:focus, select:focus { border-color: #3498db; outline: none; }
+
+        button.calc-btn {
             width: 100%;
-            padding: 15px;
-            background-color: #3498db;
+            padding: 14px;
+            background-color: #27ae60;
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s;
             margin-top: 10px;
         }
-        button:hover { background-color: #2980b9; }
+        button.calc-btn:hover { background-color: #219150; }
+
+        /* Sonuç Ekranı */
         .result-box {
-            margin-top: 20px;
+            background: #f8f9fa;
+            border-left: 5px solid #2ecc71;
             padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            display: none; /* Başlangıçta gizli */
+            margin-top: 25px;
+            border-radius: 4px;
+            display: none;
         }
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-        .total { font-weight: bold; color: #27ae60; border-top: 1px solid #ddd; padding-top: 10px; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 1rem; }
+        .total-row { font-weight: bold; color: #27ae60; font-size: 1.2rem; border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px; }
+
+        @keyframes fadeEffect { from {opacity: 0;} to {opacity: 1;} }
     </style>
 </head>
 <body>
 
-    <div class="calculator-card">
-        <h1>KDV Hesaplama 🧮</h1>
-        
-        <div class="input-group">
-            <label>Tutar (TL)</label>
-            <input type="number" id="amount" placeholder="Örn: 1000">
-        </div>
-
-        <div class="input-group">
-            <label>KDV Oranı</label>
-            <select id="rate">
-                <option value="0.20">%20 (Genel)</option>
-                <option value="0.10">%10 (Gıda/Tekstil)</option>
-                <option value="0.01">%1 (Temel Gıda)</option>
-            </select>
-        </div>
-
-        <button onclick="hesapla()">HESAPLA</button>
-
-        <div class="result-box" id="resultBox">
-            <div class="result-row">
-                <span>KDV Hariç:</span>
-                <span id="baseResult">0 TL</span>
-            </div>
-            <div class="result-row">
-                <span>KDV Tutarı:</span>
-                <span id="kdvResult">0 TL</span>
-            </div>
-            <div class="result-row total">
-                <span>TOPLAM:</span>
-                <span id="totalResult">0 TL</span>
-            </div>
-        </div>
+    <div class="header">
+        <button class="nav-btn active" onclick="openTab('kdv', this)"><i class="fas fa-percent"></i> KDV</button>
+        <button class="nav-btn" onclick="openTab('maas', this)"><i class="fas fa-money-bill-wave"></i> Maaş (Net)</button>
+        <button class="nav-btn" onclick="openTab('yuzde', this)"><i class="fas fa-calculator"></i> Yüzde</button>
     </div>
 
-    <script>
-        function hesapla() {
-            // Verileri al
-            const tutar = parseFloat(document.getElementById('amount').value);
-            const oran = parseFloat(document.getElementById('rate').value);
+    <div class="container">
 
-            // Boş mu diye kontrol et
-            if (isNaN(tutar)) {
-                alert("Lütfen bir tutar girin!");
-                return;
-            }
+        <div id="kdv" class="tab-content active-tab">
+            <h2>KDV Hesaplama</h2>
+            <div class="form-group">
+                <label>Tutar (TL)</label>
+                <input type="number" id="kdvTutar" placeholder="Örn: 1000">
+            </div>
+            <div class="form-group">
+                <label>KDV Oranı</label>
+                <select id="kdvOran">
+                    <option value="0.20">%20 (Genel)</option>
+                    <option value="0.10">%10 (Gıda/Tekstil)</option>
+                    <option value="0.01">%1 (Temel)</option>
+                </select>
+            </div>
+            <button class="calc-btn" onclick="hesaplaKDV()">HESAPLA</button>
+            <div id="kdvSonuc" class="result-box"></div>
+        </div>
 
-            // Hesabı yap (KDV Dahil Hesabı varsayıyoruz basitlik için)
-            // İstersen burayı "Hariçten Dahile" veya "Dahilden Hariçe" diye geliştirebiliriz.
-            // Şimdilik: Girilen Tutar + KDV = Sonuç yapalım.
-            
-            const kdvTutari = tutar * oran;
-            const toplamTutar = tutar + kdvTutari;
-
-            // Ekrana yazdır
-            document.getElementById('baseResult').innerText = tutar.toFixed(2) + ' TL';
-            document.getElementById('kdvResult').innerText = kdvTutari.toFixed(2) + ' TL';
-            document.getElementById('totalResult').innerText = toplamTutar.toFixed(2) + ' TL';
-
-            // Kutuyu göster
-            document.getElementById('resultBox').style.display = 'block';
-        }
-    </script>
-</body>
-</html>
+        <div id="maas" class="tab-content">
+            <h2>Maaş Hesaplama (2026 Tahmini)</h2>
+            <div class="form-group">
+                <label>Aylık Brüt Maaş (TL)</label>
+                <input type="number" id="brutMaas" placeholder="Örn: 30000">
+            </div>
+            <div class="form-group">
+                <label>Medeni Durum
