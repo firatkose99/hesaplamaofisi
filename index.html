@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hesaplama Ofisi | Profesyonel Finans Araçları</title>
-    <meta name="description" content="Net Maaş, KDV, Kredi, Kira Artış Oranı ve Tevkifat Hesaplama araçlarıyla tüm finansal işlemlerinizi tek adreste yapın.">
+    <meta name="description" content="Net Maaş, Mevduat Faizi, KDV, Kredi, Kira Artışı ve Tevkifat Hesaplama araçlarıyla tüm finansal işlemlerinizi tek adreste yapın.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script>
@@ -54,7 +54,31 @@
             goster('kdvSonuc', `<div class="row"><span>Matrah:</span> <span>${formatlaSonuc(tutar)} TL</span></div><div class="row"><span>KDV:</span> <span>${formatlaSonuc(kdv)} TL</span></div><div class="line"></div><div class="total">TOPLAM: ${formatlaSonuc(toplam)} TL</div>`);
         }
 
-        // 3. KREDİ
+        // 3. MEVDUAT FAİZİ (YENİ!)
+        function hesaplaMevduat() {
+            let anaPara = parayiCoz(document.getElementById('mevduatTutar').value);
+            let oran = parayiCoz(document.getElementById('mevduatOran').value);
+            let gun = parayiCoz(document.getElementById('mevduatGun').value);
+
+            if (anaPara === 0 || oran === 0 || gun === 0) { alert("Tüm alanları doldurun."); return; }
+
+            // Formül: (Anapara * Oran * Gün) / 36500
+            let brutGetiri = (anaPara * oran * gun) / 36500;
+            // Stopaj (Genelde %5 veya %7.5 değişir, ortalama %5 alalım net kazanç için)
+            let stopaj = brutGetiri * 0.05; 
+            let netGetiri = brutGetiri - stopaj;
+            let toplamPara = anaPara + netGetiri;
+
+            goster('mevduatSonuc', `
+                <div class="row"><span>Brüt Getiri:</span> <span>${formatlaSonuc(brutGetiri)} TL</span></div>
+                <div class="row red"><span>Stopaj (%5):</span> <span>-${formatlaSonuc(stopaj)} TL</span></div>
+                <div class="line"></div>
+                <div class="total teal">NET KAZANÇ: ${formatlaSonuc(netGetiri)} TL</div>
+                <div style="text-align:center; font-size:0.9rem; margin-top:5px; color:#7f8c8d;">Toplam Bakiye: ${formatlaSonuc(toplamPara)} TL</div>
+            `);
+        }
+
+        // 4. KREDİ
         function hesaplaKredi() {
             let tutar = parayiCoz(document.getElementById('krediTutar').value);
             let vade = parayiCoz(document.getElementById('krediVade').value);
@@ -66,7 +90,7 @@
             goster('krediSonuc', `<div class="row"><span>Taksit:</span> <span>${formatlaSonuc(taksit)} TL</span></div><div class="row"><span>Toplam:</span> <span>${formatlaSonuc(topO)} TL</span></div><div class="line"></div><div class="total red-text">FAİZ: ${formatlaSonuc(topO - tutar)} TL</div>`);
         }
 
-        // 4. KİRA ARTIŞI
+        // 5. KİRA ARTIŞI
         function hesaplaKira() {
             let kira = parayiCoz(document.getElementById('kiraTutar').value);
             let oran = parayiCoz(document.getElementById('kiraOran').value);
@@ -77,7 +101,7 @@
             goster('kiraSonuc', `<div class="row"><span>Mevcut Kira:</span> <span>${formatlaSonuc(kira)} TL</span></div><div class="row"><span>Artış Tutarı:</span> <span>+${formatlaSonuc(artis)} TL</span></div><div class="line"></div><div class="total orange">YENİ KİRA: ${formatlaSonuc(yeniKira)} TL</div>`);
         }
 
-        // 5. TEVKİFAT
+        // 6. TEVKİFAT
         function hesaplaTevkifat() {
             let tutar = parayiCoz(document.getElementById('tevkifatTutar').value);
             let kdvO = parseFloat(document.getElementById('tevkifatKdv').value);
@@ -87,7 +111,7 @@
             goster('tevkifatSonuc', `<div class="row"><span>KDV:</span> <span>${formatlaSonuc(hKDV)} TL</span></div><div class="row red"><span>Tevkifat:</span> <span>-${formatlaSonuc(tTutari)} TL</span></div><div class="line"></div><div class="total dark">TOPLAM: ${formatlaSonuc(top)} TL</div>`);
         }
 
-        // 6. İSKONTO
+        // 7. İSKONTO
         function hesaplaIskonto() {
             let fiyat = parayiCoz(document.getElementById('iskontoFiyat').value);
             let oran = parayiCoz(document.getElementById('iskontoOran').value);
@@ -96,7 +120,7 @@
             goster('iskontoSonuc', `<div class="row"><span>İndirim:</span> <span>-${formatlaSonuc(indirim)} TL</span></div><div class="line"></div><div class="total purple">YENİ FİYAT: ${formatlaSonuc(yeni)} TL</div>`);
         }
 
-        // 7. YÜZDE
+        // 8. YÜZDE
         function hesaplaYuzde() {
             let s = parayiCoz(document.getElementById('yuzdeSayi').value);
             let o = parayiCoz(document.getElementById('yuzdeOran').value);
@@ -109,19 +133,12 @@
             let div = document.getElementById(id); div.style.display = 'block'; div.innerHTML = html;
         }
 
-        // --- GİZLİLİK POLİTİKASI PENCERESİ (MODAL) ---
-        function acGizlilik() {
-            document.getElementById('gizlilikModal').style.display = "block";
-        }
-        function kapatGizlilik() {
-            document.getElementById('gizlilikModal').style.display = "none";
-        }
-        // Pencere dışına tıklayınca kapatma
+        // --- GİZLİLİK POLİTİKASI PENCERESİ ---
+        function acGizlilik() { document.getElementById('gizlilikModal').style.display = "block"; }
+        function kapatGizlilik() { document.getElementById('gizlilikModal').style.display = "none"; }
         window.onclick = function(event) {
             let modal = document.getElementById('gizlilikModal');
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+            if (event.target == modal) { modal.style.display = "none"; }
         }
     </script>
 
@@ -132,7 +149,6 @@
         .header h1 { margin: 0; font-size: 2.5rem; }
         .header p { opacity: 0.8; margin-top: 10px; font-size: 1.1rem; }
 
-        /* GRID */
         .container {
             display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start;
             gap: 20px; max-width: 1200px; margin: 0 auto 50px auto; padding: 0 20px;
@@ -148,6 +164,7 @@
         /* Renkler */
         .c-maas { border-top-color: #2980b9; } .btn-blue { background: #2980b9; }
         .c-kdv { border-top-color: #27ae60; } .btn-green { background: #27ae60; }
+        .c-mevduat { border-top-color: #16a085; } .btn-teal { background: #16a085; } /* Yeni Renk */
         .c-kredi { border-top-color: #c0392b; } .btn-red { background: #c0392b; }
         .c-kira { border-top-color: #d35400; } .btn-dark-orange { background: #d35400; }
         .c-tevkifat { border-top-color: #34495e; } .btn-dark { background: #34495e; }
@@ -164,6 +181,7 @@
         .line { border-bottom: 1px solid #eee; margin: 10px 0; }
         .total { font-weight: 800; font-size: 1.3rem; text-align: center; color: #333; }
         .red { color: #c0392b; } .blue { color: #2980b9; } .red-text { color: #c0392b; } .dark { color: #34495e; } .purple { color: #8e44ad; } .orange { color: #e67e22; }
+        .teal { color: #16a085; }
 
         /* BİLGİ ALANI */
         .info-section {
@@ -173,43 +191,15 @@
         .info-section h3 { color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-top: 30px; }
         .ad-placeholder { background-color: #f8f9fa; border: 2px dashed #ccc; color: #999; text-align: center; padding: 20px; margin: 30px 0; font-weight: bold; border-radius: 8px; }
 
-        /* FOOTER & İLETİŞİM */
         .footer { background: #2c3e50; color: white; text-align: center; padding: 30px 20px; font-size: 0.9rem; margin-top: auto; }
         .footer a { color: #3498db; text-decoration: none; font-weight: bold; margin: 0 5px; }
         .footer a:hover { text-decoration: underline; color: #5dade2; }
 
-        /* --- MODAL (GİZLİLİK PENCERESİ) STİLİ --- */
-        .modal {
-            display: none; /* Varsayılan olarak gizli */
-            position: fixed; 
-            z-index: 999; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgb(0,0,0); 
-            background-color: rgba(0,0,0,0.6); /* Siyah Transparan */
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto; /* Üstten %10 aşağıda */
-            padding: 30px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 700px;
-            border-radius: 12px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-            position: relative;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
+        /* MODAL STİLİ */
+        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 30px; border: 1px solid #888; width: 80%; max-width: 700px; border-radius: 12px; position: relative; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close:hover { color: black; }
     </style>
 </head>
 <body>
@@ -226,6 +216,14 @@
             <div style="flex-grow:1;"></div>
             <button class="btn-blue" onclick="hesaplaMaas()">HESAPLA</button>
             <div id="maasSonuc" class="result"></div>
+        </div>
+        <div class="card c-mevduat">
+            <h2><i class="fas fa-coins" style="color:#16a085;"></i> Vadeli Mevduat Faizi</h2>
+            <input type="text" id="mevduatTutar" placeholder="Yatırılacak Tutar (TL)" oninput="formatlaBu(this)">
+            <input type="text" id="mevduatOran" placeholder="Yıllık Faiz Oranı (%)" oninput="formatlaBu(this)">
+            <input type="text" id="mevduatGun" placeholder="Vade (Gün Sayısı)" oninput="formatlaBu(this)">
+            <button class="btn-teal" onclick="hesaplaMevduat()">KAZANCI HESAPLA</button>
+            <div id="mevduatSonuc" class="result"></div>
         </div>
         <div class="card c-kdv">
             <h2><i class="fas fa-calculator" style="color:#27ae60;"></i> KDV Hesapla</h2>
@@ -277,13 +275,13 @@
 
     <div class="info-section">
         <div class="ad-placeholder">GOOGLE REKLAM ALANI</div>
-        <h3>Maaş ve Kredi Hesaplamaları</h3>
-        <p>Hesaplama Ofisi olarak en sık ihtiyaç duyulan finansal araçları bir araya getirdik. Brüt maaşınızdan elinize geçecek net tutarı öğrenmek veya çekeceğiniz kredinin aylık taksitlerini hesaplamak artık çok kolay.</p>
-        <h3>Kira Artış Oranı Hesaplama</h3>
-        <p>TÜFE oranlarına veya yasal sınırlara göre kira artış hesaplaması yapabilirsiniz. Mevcut kira bedelinizi ve artış oranını girerek yeni dönem kiranızı anında öğrenin.</p>
+        <h3>Mevduat Faizi ve Kredi Hesaplama</h3>
+        <p>Hesaplama Ofisi'nde artık paranızın değerini de hesaplayabilirsiniz. Vadeli mevduat aracı ile anaparanızın vade sonunda ne kadar getiri sağlayacağını net olarak görün. Ayrıca kredi geri ödemelerinizi de planlayabilirsiniz.</p>
+        <h3>Maaş Bordrosu ve Kira Artışı</h3>
+        <p>Brüt maaştan net maaşa geçişteki tüm kesintileri (SGK, Vergi) görebilir, kira artış dönemlerinde yasal veya özel oranlara göre yeni kiranızı hesaplayabilirsiniz.</p>
         <div class="ad-placeholder">GOOGLE REKLAM ALANI</div>
-        <h3>KDV ve Tevkifat</h3>
-        <p>İşletmeler ve muhasebeciler için KDV dahil/hariç hesaplamalar ile tevkifatlı fatura işlemlerini saniyeler içinde yapabileceğiniz pratik araçlar sunuyoruz.</p>
+        <h3>KDV ve Muhasebe Araçları</h3>
+        <p>İşletmeler için KDV dahil/hariç hesaplamalar ve tevkifatlı fatura işlemleri saniyeler içinde elinizin altında.</p>
     </div>
 
     <div class="footer">
@@ -300,17 +298,7 @@
             <span class="close" onclick="kapatGizlilik()">&times;</span>
             <h2 style="margin-top:0; color:#2c3e50;">Gizlilik Politikası</h2>
             <p><strong>Son Güncelleme:</strong> 16.01.2026</p>
-            <p>Hesaplama Ofisi ("biz", "sitemiz") olarak kullanıcılarımızın gizliliğine önem veriyoruz.</p>
-            
-            <h4>1. Veri Toplama ve Kullanım</h4>
-            <p>Bu web sitesinde yapılan tüm hesaplamalar (Maaş, KDV, Kredi vb.) tamamen <strong>tarayıcı tabanlıdır</strong>. Girdiğiniz hiçbir veri (maaş bilgisi, kredi tutarı vb.) sunucularımıza kaydedilmez, saklanmaz ve üçüncü şahıslarla paylaşılmaz. Sayfayı yenilediğinizde tüm veriler silinir.</p>
-
-            <h4>2. Çerezler (Cookies)</h4>
-            <p>Sitemiz, hizmet kalitesini artırmak ve reklam gösterimi sağlamak amacıyla çerezler kullanabilir. Özellikle Google AdSense reklamları, ilgi alanınıza göre reklam sunmak için çerezlerden faydalanabilir.</p>
-
-            <h4>3. İletişim</h4>
-            <p>Bizimle iletişime geçmek için sayfanın altındaki e-posta adresini kullanabilirsiniz.</p>
-            
+            <p>Hesaplama Ofisi olarak kullanıcı verilerini sunucularımızda saklamıyoruz. Tüm işlemler tarayıcınızda gerçekleşir.</p>
             <button class="btn-blue" style="width:100%; margin-top:15px;" onclick="kapatGizlilik()">ANLAŞILDI, KAPAT</button>
         </div>
     </div>
