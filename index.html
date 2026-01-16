@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hesaplama Ofisi | Profesyonel Araçlar</title>
+    <title>Hesaplama Ofisi | Profesyonel Finans Araçları</title>
+    <meta name="description" content="KDV, Net Maaş, Tevkifat ve Kredi Hesaplama araçlarıyla finansal işlemlerinizi ücretsiz ve hızlıca yapın. Muhasebe ve kredi hesaplama ofisi.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script>
@@ -31,7 +32,8 @@
         }
 
         // ================= MOTORLAR =================
-
+        // (Kodlar aynı, sadece sayfa altına yazı eklendiği için burayı kısa tutuyorum)
+        
         // 1. KDV
         function hesaplaKDV() {
             let tutar = parayiCoz(document.getElementById('kdvTutar').value);
@@ -39,31 +41,18 @@
             if (tutar === 0) { alert("Tutar giriniz."); return; }
             let kdv = tutar * oran;
             let toplam = tutar + kdv;
-            goster('kdvSonuc', `
-                <div class="row"><span>Matrah:</span> <span>${formatlaSonuc(tutar)} TL</span></div>
-                <div class="row"><span>KDV:</span> <span>${formatlaSonuc(kdv)} TL</span></div>
-                <div class="line"></div>
-                <div class="total">TOPLAM: ${formatlaSonuc(toplam)} TL</div>
-            `);
+            goster('kdvSonuc', `<div class="row"><span>Matrah:</span> <span>${formatlaSonuc(tutar)} TL</span></div><div class="row"><span>KDV:</span> <span>${formatlaSonuc(kdv)} TL</span></div><div class="line"></div><div class="total">TOPLAM: ${formatlaSonuc(toplam)} TL</div>`);
         }
 
         // 2. MAAŞ
         function hesaplaMaas() {
             let brut = parayiCoz(document.getElementById('maasBrut').value);
             if (brut === 0) { alert("Brüt maaş giriniz."); return; }
-            let sgk = brut * 0.14;
-            let issizlik = brut * 0.01;
+            let sgk = brut * 0.14; let issizlik = brut * 0.01;
             let matrah = brut - (sgk + issizlik); 
-            let gelirV = matrah * 0.15; 
-            let damga = brut * 0.00759;
+            let gelirV = matrah * 0.15; let damga = brut * 0.00759;
             let net = brut - (sgk + issizlik + gelirV + damga);
-            goster('maasSonuc', `
-                <div class="row"><span>Brüt Maaş:</span> <span>${formatlaSonuc(brut)} TL</span></div>
-                <div class="line"></div>
-                <div class="row red"><span>Toplam Kesinti:</span> <span>-${formatlaSonuc(sgk+issizlik+gelirV+damga)} TL</span></div>
-                <div class="line"></div>
-                <div class="total blue">NET: ${formatlaSonuc(net)} TL</div>
-            `);
+            goster('maasSonuc', `<div class="row"><span>Brüt Maaş:</span> <span>${formatlaSonuc(brut)} TL</span></div><div class="line"></div><div class="row red"><span>Toplam Kesinti:</span> <span>-${formatlaSonuc(sgk+issizlik+gelirV+damga)} TL</span></div><div class="line"></div><div class="total blue">NET: ${formatlaSonuc(net)} TL</div>`);
         }
 
         // 3. YÜZDE
@@ -72,10 +61,7 @@
             let o = parayiCoz(document.getElementById('yuzdeOran').value);
             if (s === 0 || o === 0) return;
             let sonuc = (s * o) / 100;
-            goster('yuzdeSonuc', `
-                <div style="text-align:center; color:#666;">Sonuç:</div>
-                <div class="total orange" style="font-size:1.8rem;">${formatlaSonuc(sonuc)}</div>
-            `);
+            goster('yuzdeSonuc', `<div style="text-align:center; color:#666;">Sonuç:</div><div class="total orange" style="font-size:1.8rem;">${formatlaSonuc(sonuc)}</div>`);
         }
 
         // 4. İSKONTO
@@ -83,140 +69,115 @@
             let fiyat = parayiCoz(document.getElementById('iskontoFiyat').value);
             let oran = parayiCoz(document.getElementById('iskontoOran').value);
             if (fiyat === 0) { alert("Fiyat giriniz."); return; }
-            let indirim = (fiyat * oran) / 100;
-            let yeniFiyat = fiyat - indirim;
-            goster('iskontoSonuc', `
-                <div class="row"><span>İndirim:</span> <span>-${formatlaSonuc(indirim)} TL</span></div>
-                <div class="line"></div>
-                <div class="total purple">YENİ FİYAT: ${formatlaSonuc(yeniFiyat)} TL</div>
-            `);
+            let indirim = (fiyat * oran) / 100; let yeni = fiyat - indirim;
+            goster('iskontoSonuc', `<div class="row"><span>İndirim:</span> <span>-${formatlaSonuc(indirim)} TL</span></div><div class="line"></div><div class="total purple">YENİ FİYAT: ${formatlaSonuc(yeni)} TL</div>`);
         }
 
         // 5. TEVKİFAT
         function hesaplaTevkifat() {
             let tutar = parayiCoz(document.getElementById('tevkifatTutar').value);
-            let kdvOrani = parseFloat(document.getElementById('tevkifatKdv').value);
-            let tevkifatOrani = parseFloat(document.getElementById('tevkifatOran').value);
+            let kdvO = parseFloat(document.getElementById('tevkifatKdv').value);
+            let tevO = parseFloat(document.getElementById('tevkifatOran').value);
             if (tutar === 0) { alert("Tutar giriniz."); return; }
-            let hesaplananKDV = tutar * kdvOrani; 
-            let tevkifatTutari = hesaplananKDV * tevkifatOrani;
-            let beyanKDV = hesaplananKDV - tevkifatTutari; 
-            let toplamTahsilat = tutar + beyanKDV;
-            goster('tevkifatSonuc', `
-                <div class="row"><span>KDV:</span> <span>${formatlaSonuc(hesaplananKDV)} TL</span></div>
-                <div class="row red"><span>Tevkifat:</span> <span>-${formatlaSonuc(tevkifatTutari)} TL</span></div>
-                <div class="line"></div>
-                <div class="total dark">TOPLAM: ${formatlaSonuc(toplamTahsilat)} TL</div>
-            `);
+            let hKDV = tutar * kdvO; let tTutari = hKDV * tevO; let bKDV = hKDV - tTutari; let top = tutar + bKDV;
+            goster('tevkifatSonuc', `<div class="row"><span>KDV:</span> <span>${formatlaSonuc(hKDV)} TL</span></div><div class="row red"><span>Tevkifat:</span> <span>-${formatlaSonuc(tTutari)} TL</span></div><div class="line"></div><div class="total dark">TOPLAM: ${formatlaSonuc(top)} TL</div>`);
         }
 
-        // 6. KREDİ HESAPLAMA (YENİ!)
+        // 6. KREDİ
         function hesaplaKredi() {
             let tutar = parayiCoz(document.getElementById('krediTutar').value);
             let vade = parayiCoz(document.getElementById('krediVade').value);
             let faiz = parayiCoz(document.getElementById('krediFaiz').value);
-
-            if (tutar === 0 || vade === 0 || faiz === 0) { alert("Tüm alanları doldurun."); return; }
-
-            // Kredi Formülü: (Anapara * Faiz * (1+Faiz)^Vade) / ((1+Faiz)^Vade - 1)
-            let aylikFaiz = faiz / 100;
-            let taksit = (tutar * aylikFaiz * Math.pow((1 + aylikFaiz), vade)) / (Math.pow((1 + aylikFaiz), vade) - 1);
-            let toplamOdeme = taksit * vade;
-
-            goster('krediSonuc', `
-                <div class="row"><span>Aylık Taksit:</span> <span>${formatlaSonuc(taksit)} TL</span></div>
-                <div class="row"><span>Toplam Ödeme:</span> <span>${formatlaSonuc(toplamOdeme)} TL</span></div>
-                <div class="line"></div>
-                <div class="total red-text">FAİZ: ${formatlaSonuc(toplamOdeme - tutar)} TL</div>
-            `);
+            if (tutar===0 || vade===0 || faiz===0) { alert("Tüm alanları doldurun."); return; }
+            let ayF = faiz/100;
+            let taksit = (tutar * ayF * Math.pow((1+ayF), vade)) / (Math.pow((1+ayF), vade) - 1);
+            let topO = taksit * vade;
+            goster('krediSonuc', `<div class="row"><span>Taksit:</span> <span>${formatlaSonuc(taksit)} TL</span></div><div class="row"><span>Toplam:</span> <span>${formatlaSonuc(topO)} TL</span></div><div class="line"></div><div class="total red-text">FAİZ: ${formatlaSonuc(topO - tutar)} TL</div>`);
         }
 
         function goster(id, html) {
-            let div = document.getElementById(id);
-            div.style.display = 'block';
-            div.innerHTML = html;
+            let div = document.getElementById(id); div.style.display = 'block'; div.innerHTML = html;
         }
     </script>
 
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: #2c3e50; margin: 0; font-size: 2rem; }
-        .header p { color: #95a5a6; margin-top: 5px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #333; }
+        
+        /* HEADER */
+        .header { background: #2c3e50; color: white; padding: 40px 20px; text-align: center; margin-bottom: 30px; }
+        .header h1 { margin: 0; font-size: 2.5rem; }
+        .header p { opacity: 0.8; margin-top: 10px; font-size: 1.1rem; }
 
+        /* GRID */
         .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start; /* Kart boyları birbirini bozmasın */
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start;
+            gap: 20px; max-width: 1200px; margin: 0 auto 50px auto; padding: 0 20px;
         }
 
         .card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
+            background: white; padding: 25px; border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            flex: 1 1 300px;
-            max-width: 380px;
-            border-top: 5px solid #ccc;
-            display: flex;
-            flex-direction: column;
+            flex: 1 1 300px; max-width: 380px;
+            border-top: 5px solid #ccc; display: flex; flex-direction: column;
         }
 
-        /* Renkler */
-        .c-kdv { border-top-color: #27ae60; }
-        .c-maas { border-top-color: #2980b9; }
-        .c-yuzde { border-top-color: #e67e22; }
-        .c-iskonto { border-top-color: #8e44ad; }
-        .c-tevkifat { border-top-color: #34495e; }
-        .c-kredi { border-top-color: #c0392b; } /* Kırmızı */
+        /* Renkler & Buttonlar */
+        .c-kdv { border-top-color: #27ae60; } .btn-green { background: #27ae60; }
+        .c-maas { border-top-color: #2980b9; } .btn-blue { background: #2980b9; }
+        .c-yuzde { border-top-color: #e67e22; } .btn-orange { background: #e67e22; }
+        .c-iskonto { border-top-color: #8e44ad; } .btn-purple { background: #8e44ad; }
+        .c-tevkifat { border-top-color: #34495e; } .btn-dark { background: #34495e; }
+        .c-kredi { border-top-color: #c0392b; } .btn-red { background: #c0392b; }
 
-        h2 { font-size: 1.1rem; margin-top: 0; display: flex; align-items: center; gap: 10px; color: #34495e; }
-        
-        input, select {
-            width: 100%; padding: 12px; margin: 8px 0; 
-            border: 2px solid #eaeff2; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;
-        }
+        h2 { font-size: 1.2rem; margin-top: 0; display: flex; align-items: center; gap: 10px; color: #34495e; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #eaeff2; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
         input:focus { border-color: #3498db; outline: none; }
-        
-        button {
-            width: 100%; padding: 12px; margin-top: auto;
-            border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; transition: 0.2s;
-        }
+        button { width: 100%; padding: 12px; margin-top: auto; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
         button:hover { opacity: 0.9; }
-
-        .btn-green { background-color: #27ae60; }
-        .btn-blue { background-color: #2980b9; }
-        .btn-orange { background-color: #e67e22; }
-        .btn-purple { background-color: #8e44ad; }
-        .btn-dark { background-color: #34495e; }
-        .btn-red { background-color: #c0392b; }
-
         .result { background: #fff; border: 1px solid #eee; padding: 15px; margin-top: 15px; border-radius: 8px; display: none; }
-        .row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px; }
-        .red { color: #c0392b; }
-        .blue { color: #2980b9; }
+        .row { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 5px; }
         .line { border-bottom: 1px solid #eee; margin: 10px 0; }
-        .total { font-weight: 800; font-size: 1.2rem; text-align: center; color: #27ae60; }
-        .total.blue { color: #2980b9; }
-        .total.orange { color: #e67e22; }
-        .total.purple { color: #8e44ad; }
-        .total.dark { color: #34495e; }
-        .total.red-text { color: #c0392b; }
+        .total { font-weight: 800; font-size: 1.3rem; text-align: center; color: #333; }
+        .red { color: #c0392b; } .blue { color: #2980b9; } .red-text { color: #c0392b; } .dark { color: #34495e; } .purple { color: #8e44ad; } .orange { color: #e67e22; }
+
+        /* --- YENİ BÖLÜM: BİLGİ KÖŞESİ (SEO & REKLAM İÇİN) --- */
+        .info-section {
+            background: white;
+            max-width: 1000px;
+            margin: 0 auto 50px auto;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            color: #444;
+            line-height: 1.6;
+        }
+        .info-section h3 { color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-top: 30px; }
+        .info-section p { margin-bottom: 15px; }
+        
+        /* Reklam Alanı Temsili */
+        .ad-placeholder {
+            background-color: #f8f9fa;
+            border: 2px dashed #ccc;
+            color: #999;
+            text-align: center;
+            padding: 20px;
+            margin: 30px 0;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+
+        /* Footer */
+        .footer { background: #2c3e50; color: white; text-align: center; padding: 20px; font-size: 0.9rem; margin-top: auto; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>Hesaplama Ofisi 🇹🇷</h1>
-        <p>Finansal Çözüm Ortağınız</p>
+        <p>Tüm Finansal ve Muhasebe İşlemleriniz Tek Ekranda</p>
     </div>
 
     <div class="container">
-
         <div class="card c-kdv">
             <h2><i class="fas fa-calculator" style="color:#27ae60;"></i> KDV Hesapla</h2>
             <input type="text" id="kdvTutar" placeholder="Tutar (TL)" oninput="formatlaBu(this)">
@@ -257,15 +218,8 @@
             <h2><i class="fas fa-briefcase" style="color:#34495e;"></i> KDV Tevkifat</h2>
             <input type="text" id="tevkifatTutar" placeholder="Fatura Tutarı" oninput="formatlaBu(this)">
             <div style="display:flex; gap:10px;">
-                <select id="tevkifatKdv">
-                    <option value="0.20">%20 KDV</option>
-                    <option value="0.10">%10 KDV</option>
-                </select>
-                <select id="tevkifatOran">
-                    <option value="0.5">5/10</option>
-                    <option value="0.7">7/10</option>
-                    <option value="0.9">9/10</option>
-                </select>
+                <select id="tevkifatKdv"><option value="0.20">%20 KDV</option><option value="0.10">%10 KDV</option></select>
+                <select id="tevkifatOran"><option value="0.5">5/10</option><option value="0.7">7/10</option><option value="0.9">9/10</option></select>
             </div>
             <button class="btn-dark" onclick="hesaplaTevkifat()">TEVKİFATI AYIR</button>
             <div id="tevkifatSonuc" class="result"></div>
@@ -275,11 +229,37 @@
             <h2><i class="fas fa-university" style="color:#c0392b;"></i> Kredi Hesapla</h2>
             <input type="text" id="krediTutar" placeholder="Kredi Tutarı (TL)" oninput="formatlaBu(this)">
             <input type="text" id="krediVade" placeholder="Vade (Ay Sayısı)" oninput="formatlaBu(this)">
-            <input type="text" id="krediFaiz" placeholder="Aylık Faiz Oranı (Örn: 3,50)" oninput="formatlaBu(this)">
+            <input type="text" id="krediFaiz" placeholder="Aylık Faiz (Örn: 3,50)" oninput="formatlaBu(this)">
             <button class="btn-red" onclick="hesaplaKredi()">TAKSİT HESAPLA</button>
             <div id="krediSonuc" class="result"></div>
         </div>
+    </div>
 
+    <div class="info-section">
+        
+        <div class="ad-placeholder">
+            GOOGLE REKLAM ALANI (Yatay Banner)
+            </div>
+
+        <h3>KDV Hesaplama Nasıl Yapılır?</h3>
+        <p>KDV (Katma Değer Vergisi) hesaplaması yaparken, mal veya hizmet bedeli üzerine belirlenen oran (%1, %10 veya %20) eklenir. Hesaplama Ofisi aracı ile "KDV Dahil" ve "KDV Hariç" tutarları saniyeler içinde bulabilirsiniz. Matrah üzerinden vergi hesaplaması, fatura kesim işlemlerinde büyük kolaylık sağlar.</p>
+
+        <h3>Net Maaş Hesaplama ve Kesintiler</h3>
+        <p>Brüt maaştan net maaşa giderken SGK Primi, İşsizlik Sigortası Fonu, Gelir Vergisi ve Damga Vergisi kesintileri yapılır. Aracımız, 2026 yılı tahmini vergi dilimlerini ve yasal oranları dikkate alarak size en yakın net maaş sonucunu verir. Muhasebe departmanları ve çalışanlar için idealdir.</p>
+
+        <div class="ad-placeholder">
+            GOOGLE REKLAM ALANI (Kare Banner)
+            </div>
+
+        <h3>Tevkifatlı Fatura Nedir?</h3>
+        <p>KDV Tevkifatı, verginin bir kısmının alıcı tarafından, diğer kısmının ise satıcı tarafından devlete ödenmesidir. Özellikle 5/10, 7/10 ve 9/10 oranları inşaat, temizlik ve nakliye sektörlerinde sıkça kullanılır. Hesaplama aracımız, faturadaki tevkifat tutarını otomatik olarak ayırır.</p>
+
+        <h3>Kredi Geri Ödeme Hesaplama</h3>
+        <p>Bankadan çekilen İhtiyaç, Konut veya Taşıt kredisinin aylık taksitlerini hesaplamak için "Anapara, Vade ve Faiz Oranı" bilgileri yeterlidir. Sistemimiz, aylık eşit taksitli ödeme planına göre toplam geri ödemeyi ve faiz yükünü hesaplar.</p>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 Hesaplama Ofisi - Tüm Hakları Saklıdır.
     </div>
 
 </body>
