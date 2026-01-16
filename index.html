@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hesaplama Ofisi | Muhasebe Pro</title>
+    <title>Hesaplama Ofisi | Profesyonel Araçlar</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script>
@@ -36,12 +36,9 @@
         function hesaplaKDV() {
             let tutar = parayiCoz(document.getElementById('kdvTutar').value);
             let oran = parseFloat(document.getElementById('kdvOran').value);
-            
             if (tutar === 0) { alert("Tutar giriniz."); return; }
-            
             let kdv = tutar * oran;
             let toplam = tutar + kdv;
-
             goster('kdvSonuc', `
                 <div class="row"><span>Matrah:</span> <span>${formatlaSonuc(tutar)} TL</span></div>
                 <div class="row"><span>KDV:</span> <span>${formatlaSonuc(kdv)} TL</span></div>
@@ -50,27 +47,20 @@
             `);
         }
 
-        // 2. MAAŞ (Brütten Nete - Detaylı)
+        // 2. MAAŞ
         function hesaplaMaas() {
             let brut = parayiCoz(document.getElementById('maasBrut').value);
             if (brut === 0) { alert("Brüt maaş giriniz."); return; }
-            
-            // Oranlar
             let sgk = brut * 0.14;
             let issizlik = brut * 0.01;
             let matrah = brut - (sgk + issizlik); 
-            let gelirV = matrah * 0.15; // %15 Varsayılan
+            let gelirV = matrah * 0.15; 
             let damga = brut * 0.00759;
-            
             let net = brut - (sgk + issizlik + gelirV + damga);
-
             goster('maasSonuc', `
                 <div class="row"><span>Brüt Maaş:</span> <span>${formatlaSonuc(brut)} TL</span></div>
                 <div class="line"></div>
-                <div class="row red"><span>SGK Primi (%14):</span> <span>-${formatlaSonuc(sgk)} TL</span></div>
-                <div class="row red"><span>İşsizlik Fonu (%1):</span> <span>-${formatlaSonuc(issizlik)} TL</span></div>
-                <div class="row red"><span>Gelir Vergisi (%15):</span> <span>-${formatlaSonuc(gelirV)} TL</span></div>
-                <div class="row red"><span>Damga Vergisi:</span> <span>-${formatlaSonuc(damga)} TL</span></div>
+                <div class="row red"><span>Toplam Kesinti:</span> <span>-${formatlaSonuc(sgk+issizlik+gelirV+damga)} TL</span></div>
                 <div class="line"></div>
                 <div class="total blue">NET: ${formatlaSonuc(net)} TL</div>
             `);
@@ -81,7 +71,6 @@
             let s = parayiCoz(document.getElementById('yuzdeSayi').value);
             let o = parayiCoz(document.getElementById('yuzdeOran').value);
             if (s === 0 || o === 0) return;
-
             let sonuc = (s * o) / 100;
             goster('yuzdeSonuc', `
                 <div style="text-align:center; color:#666;">Sonuç:</div>
@@ -94,10 +83,8 @@
             let fiyat = parayiCoz(document.getElementById('iskontoFiyat').value);
             let oran = parayiCoz(document.getElementById('iskontoOran').value);
             if (fiyat === 0) { alert("Fiyat giriniz."); return; }
-
             let indirim = (fiyat * oran) / 100;
             let yeniFiyat = fiyat - indirim;
-
             goster('iskontoSonuc', `
                 <div class="row"><span>İndirim:</span> <span>-${formatlaSonuc(indirim)} TL</span></div>
                 <div class="line"></div>
@@ -105,26 +92,42 @@
             `);
         }
 
-        // 5. KDV TEVKİFAT
+        // 5. TEVKİFAT
         function hesaplaTevkifat() {
             let tutar = parayiCoz(document.getElementById('tevkifatTutar').value);
             let kdvOrani = parseFloat(document.getElementById('tevkifatKdv').value);
             let tevkifatOrani = parseFloat(document.getElementById('tevkifatOran').value);
-            
             if (tutar === 0) { alert("Tutar giriniz."); return; }
-
-            // Hesaplamalar
-            let hesaplananKDV = tutar * kdvOrani; // Normal KDV
-            let tevkifatTutari = hesaplananKDV * tevkifatOrani; // Alıcının ödeyeceği KDV
-            let beyanKDV = hesaplananKDV - tevkifatTutari; // Satıcının alacağı KDV
-            let toplamTahsilat = tutar + beyanKDV; // Fatura Toplamı
-
+            let hesaplananKDV = tutar * kdvOrani; 
+            let tevkifatTutari = hesaplananKDV * tevkifatOrani;
+            let beyanKDV = hesaplananKDV - tevkifatTutari; 
+            let toplamTahsilat = tutar + beyanKDV;
             goster('tevkifatSonuc', `
-                <div class="row"><span>Hesaplanan KDV:</span> <span>${formatlaSonuc(hesaplananKDV)} TL</span></div>
-                <div class="row red"><span>Tevkifat (Kesinti):</span> <span>-${formatlaSonuc(tevkifatTutari)} TL</span></div>
-                <div class="row blue"><span>Tahsil Edilecek KDV:</span> <span>${formatlaSonuc(beyanKDV)} TL</span></div>
+                <div class="row"><span>KDV:</span> <span>${formatlaSonuc(hesaplananKDV)} TL</span></div>
+                <div class="row red"><span>Tevkifat:</span> <span>-${formatlaSonuc(tevkifatTutari)} TL</span></div>
                 <div class="line"></div>
-                <div class="total dark">GENEL TOPLAM: ${formatlaSonuc(toplamTahsilat)} TL</div>
+                <div class="total dark">TOPLAM: ${formatlaSonuc(toplamTahsilat)} TL</div>
+            `);
+        }
+
+        // 6. KREDİ HESAPLAMA (YENİ!)
+        function hesaplaKredi() {
+            let tutar = parayiCoz(document.getElementById('krediTutar').value);
+            let vade = parayiCoz(document.getElementById('krediVade').value);
+            let faiz = parayiCoz(document.getElementById('krediFaiz').value);
+
+            if (tutar === 0 || vade === 0 || faiz === 0) { alert("Tüm alanları doldurun."); return; }
+
+            // Kredi Formülü: (Anapara * Faiz * (1+Faiz)^Vade) / ((1+Faiz)^Vade - 1)
+            let aylikFaiz = faiz / 100;
+            let taksit = (tutar * aylikFaiz * Math.pow((1 + aylikFaiz), vade)) / (Math.pow((1 + aylikFaiz), vade) - 1);
+            let toplamOdeme = taksit * vade;
+
+            goster('krediSonuc', `
+                <div class="row"><span>Aylık Taksit:</span> <span>${formatlaSonuc(taksit)} TL</span></div>
+                <div class="row"><span>Toplam Ödeme:</span> <span>${formatlaSonuc(toplamOdeme)} TL</span></div>
+                <div class="line"></div>
+                <div class="total red-text">FAİZ: ${formatlaSonuc(toplamOdeme - tutar)} TL</div>
             `);
         }
 
@@ -141,15 +144,13 @@
         .header h1 { color: #2c3e50; margin: 0; font-size: 2rem; }
         .header p { color: #95a5a6; margin-top: 5px; }
 
-        /* GRID SİSTEMİ (DÜZELTİLDİ) */
         .container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            /* İŞTE BU SATIR SORUNU ÇÖZÜYOR: Kartlar birbirine göre uzamasın */
-            align-items: flex-start; 
+            align-items: flex-start; /* Kart boyları birbirini bozmasın */
             gap: 20px;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -171,13 +172,13 @@
         .c-yuzde { border-top-color: #e67e22; }
         .c-iskonto { border-top-color: #8e44ad; }
         .c-tevkifat { border-top-color: #34495e; }
+        .c-kredi { border-top-color: #c0392b; } /* Kırmızı */
 
         h2 { font-size: 1.1rem; margin-top: 0; display: flex; align-items: center; gap: 10px; color: #34495e; }
         
         input, select {
             width: 100%; padding: 12px; margin: 8px 0; 
-            border: 2px solid #eaeff2; border-radius: 8px; 
-            font-size: 0.95rem; box-sizing: border-box;
+            border: 2px solid #eaeff2; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;
         }
         input:focus { border-color: #3498db; outline: none; }
         
@@ -192,6 +193,7 @@
         .btn-orange { background-color: #e67e22; }
         .btn-purple { background-color: #8e44ad; }
         .btn-dark { background-color: #34495e; }
+        .btn-red { background-color: #c0392b; }
 
         .result { background: #fff; border: 1px solid #eee; padding: 15px; margin-top: 15px; border-radius: 8px; display: none; }
         .row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px; }
@@ -203,6 +205,7 @@
         .total.orange { color: #e67e22; }
         .total.purple { color: #8e44ad; }
         .total.dark { color: #34495e; }
+        .total.red-text { color: #c0392b; }
     </style>
 </head>
 <body>
@@ -227,10 +230,10 @@
         </div>
 
         <div class="card c-maas">
-            <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Brütten Nete Maaş</h2>
+            <h2><i class="fas fa-file-invoice-dollar" style="color:#2980b9;"></i> Maaş (Net)</h2>
             <input type="text" id="maasBrut" placeholder="Brüt Maaş (TL)" oninput="formatlaBu(this)">
             <div style="flex-grow:1;"></div>
-            <button class="btn-blue" onclick="hesaplaMaas()">NETİ HESAPLA</button>
+            <button class="btn-blue" onclick="hesaplaMaas()">HESAPLA</button>
             <div id="maasSonuc" class="result"></div>
         </div>
 
@@ -251,8 +254,8 @@
         </div>
 
         <div class="card c-tevkifat">
-            <h2><i class="fas fa-briefcase" style="color:#34495e;"></i> KDV Tevkifatı</h2>
-            <input type="text" id="tevkifatTutar" placeholder="Fatura Tutarı (KDV Hariç)" oninput="formatlaBu(this)">
+            <h2><i class="fas fa-briefcase" style="color:#34495e;"></i> KDV Tevkifat</h2>
+            <input type="text" id="tevkifatTutar" placeholder="Fatura Tutarı" oninput="formatlaBu(this)">
             <div style="display:flex; gap:10px;">
                 <select id="tevkifatKdv">
                     <option value="0.20">%20 KDV</option>
@@ -262,11 +265,19 @@
                     <option value="0.5">5/10</option>
                     <option value="0.7">7/10</option>
                     <option value="0.9">9/10</option>
-                    <option value="0.2">2/10</option>
                 </select>
             </div>
             <button class="btn-dark" onclick="hesaplaTevkifat()">TEVKİFATI AYIR</button>
             <div id="tevkifatSonuc" class="result"></div>
+        </div>
+
+        <div class="card c-kredi">
+            <h2><i class="fas fa-university" style="color:#c0392b;"></i> Kredi Hesapla</h2>
+            <input type="text" id="krediTutar" placeholder="Kredi Tutarı (TL)" oninput="formatlaBu(this)">
+            <input type="text" id="krediVade" placeholder="Vade (Ay Sayısı)" oninput="formatlaBu(this)">
+            <input type="text" id="krediFaiz" placeholder="Aylık Faiz Oranı (Örn: 3,50)" oninput="formatlaBu(this)">
+            <button class="btn-red" onclick="hesaplaKredi()">TAKSİT HESAPLA</button>
+            <div id="krediSonuc" class="result"></div>
         </div>
 
     </div>
