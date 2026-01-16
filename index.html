@@ -3,192 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hesaplama Ofisi | Profesyonel Muhasebe Araçları</title>
+    <title>Hesaplama Ofisi - Tüm Araçlar</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- GENEL AYARLAR --- */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f8; /* Göz yormayan gri */
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f0f2f5;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             color: #333;
         }
 
-        /* --- ÜST MENÜ --- */
-        .header {
-            background-color: #2c3e50;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .nav-btn {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 2px solid transparent;
-            color: #ecf0f1;
-            padding: 12px 25px;
-            margin: 0 8px;
-            border-radius: 50px; /* Yuvarlak hatlı butonlar */
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .nav-btn:hover {
-            background-color: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-        }
-
-        .nav-btn.active {
-            background-color: #3498db;
-            color: white;
-            box-shadow: 0 0 15px rgba(52, 152, 219, 0.5);
-            border-color: #3498db;
-        }
-        
-        .nav-btn i { margin-right: 8px; }
-
-        /* --- ANA KUTU --- */
         .container {
-            max-width: 550px;
-            margin: 40px auto;
-            background: white;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Başlık Alanı */
+        .site-header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-            padding: 30px;
-            min-height: 450px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* Sekme İçerikleri */
-        .tab-content {
-            display: none; /* Hepsi gizli başlar */
-            animation: fadeIn 0.4s ease-in-out;
-        }
-        
-        .tab-content.active-tab {
-            display: block; /* Sadece seçili olan görünür */
+        /* Kart Tasarımı (Hepsi Açık) */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px; /* Kartlar arası boşluk */
+            border-left: 6px solid #ccc;
         }
 
-        h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 15px;
-            margin-top: 0;
-        }
+        /* Kart Renkleri */
+        .card-kdv { border-left-color: #27ae60; }
+        .card-maas { border-left-color: #2980b9; }
+        .card-yuzde { border-left-color: #e67e22; }
+
+        h2 { margin-top: 0; color: #2c3e50; font-size: 1.4rem; display: flex; align-items: center; }
+        h2 i { margin-right: 10px; opacity: 0.8; }
 
         /* Formlar */
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; color: #7f8c8d; }
-        
         input, select {
             width: 100%;
-            padding: 14px;
-            border: 2px solid #dfe6e9;
-            border-radius: 10px;
-            font-size: 1rem;
+            padding: 12px;
+            margin: 8px 0 15px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             box-sizing: border-box;
-            outline: none;
-            transition: 0.3s;
-        }
-        
-        input:focus, select:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            font-size: 16px;
         }
 
-        /* Hesapla Butonları */
-        .calc-btn {
+        button {
             width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            padding: 14px;
             color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
         }
-        .btn-green { background-color: #27ae60; }
-        .btn-green:hover { background-color: #219150; }
-        
-        .btn-blue { background-color: #2980b9; }
-        .btn-blue:hover { background-color: #2573a7; }
-
-        .btn-orange { background-color: #e67e22; }
-        .btn-orange:hover { background-color: #d35400; }
 
         /* Sonuç Kutusu */
-        .result-box {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 25px;
-            display: none;
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none; /* Hesaplayınca açılacak */
         }
-        
-        .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 1.1rem; }
-        .total { font-weight: 800; font-size: 1.3rem; border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px; color: #27ae60; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <button class="nav-btn active" onclick="openTab('kdv', this)"><i class="fas fa-calculator"></i> KDV</button>
-        <button class="nav-btn" onclick="openTab('maas', this)"><i class="fas fa-money-bill-wave"></i> Maaş</button>
-        <button class="nav-btn" onclick="openTab('yuzde', this)"><i class="fas fa-percent"></i> Yüzde</button>
+    <div class="container">
+        
+        <div class="site-header">
+            <h1 style="margin:0;">Hesaplama Ofisi 🇹🇷</h1>
+            <p style="margin:5px 0 0 0; opacity:0.8;">Tüm muhasebe araçları emrinizde.</p>
+        </div>
+
+        <div class="card card-kdv">
+            <h2><i class="fas fa-calculator" style="color:#27ae60;"></i> KDV Hesaplama</h2>
+            <label>Tutar (TL):</label>
+            <input type="number" id="kdvTutar" placeholder="Örn: 1000">
+            
+            <label>Oran:</label>
+            <select id="kdvOran">
+                <option value="0.20">%20 (Genel)</option>
+                <option value="0.10">%10 (Gıda)</option>
+                <option value="0.01">%1 (Temel)</option>
+            </select>
+            
+            <button style="background-color:#27ae60;" onclick="yapKDV()">HESAPLA</button>
+            <div id="sonucKDV" class="result" style="color:#27ae60;"></div>
+        </div>
+
+        <div class="card card-maas">
+            <h2><i class="fas fa-wallet" style="color:#2980b9;"></i> Net Maaş Hesaplama</h2>
+            <label>Brüt Maaş (TL):</label>
+            <input type="number" id="maasBrut" placeholder="Örn: 30000">
+            
+            <button style="background-color:#2980b9;" onclick="yapMaas()">NETİ GÖR</button>
+            <div id="sonucMaas" class="result" style="color:#2980b9;"></div>
+        </div>
+
+        <div class="card card-yuzde">
+            <h2><i class="fas fa-percent" style="color:#e67e22;"></i> Yüzde Hesaplama</h2>
+            <label>Sayı:</label>
+            <input type="number" id="yuzdeSayi" placeholder="Örn: 500">
+            <label>Yüzde Kaçı?</label>
+            <input type="number" id="yuzdeOran" placeholder="Örn: 20">
+            
+            <button style="background-color:#e67e22;" onclick="yapYuzde()">SONUCU BUL</button>
+            <div id="sonucYuzde" class="result" style="color:#e67e22;"></div>
+        </div>
+
     </div>
 
-    <div class="container">
-
-        <div id="kdv" class="tab-content active-tab">
-            <h2>KDV Hesaplama 🧮</h2>
-            <div class="form-group">
-                <label>Tutar (TL)</label>
-                <input type="number" id="kdvTutar" placeholder="Örn: 1000">
-            </div>
-            <div class="form-group">
-                <label>KDV Oranı</label>
-                <select id="kdvOran">
-                    <option value="0.20">%20 (Genel)</option>
-                    <option value="0.10">%10 (Gıda, Tekstil)</option>
-                    <option value="0.01">%1 (Temel Gıda)</option>
-                </select>
-            </div>
-            <button class="calc-btn btn-green" onclick="hesaplaKDV()">HESAPLA</button>
-            <div id="kdvSonuc" class="result-box"></div>
-        </div>
-
-        <div id="maas" class="tab-content">
-            <h2>Net Maaş Hesaplama 💼</h2>
-            <div class="form-group">
-                <label>Brüt Maaşınız (TL)</label>
-                <input type="number" id="brutMaas" placeholder="Örn: 30000">
-            </div>
-            <div class="form-group">
-                <label>Medeni Durum</label>
-                <select>
-                    <option>Bekar</option>
-                    <option>Evli</option>
-                </select>
-            </div>
-            <button class="calc-btn btn-blue" onclick="hesaplaMaas()">NETİ GÖR</button>
-            <div id="maasSonuc" class="result-box"></div>
-            <p style="font-size:0.8rem; color:#aaa; margin-top:10px;">*Yaklaşık hesaplamadır. Vergi dilimi ortalama %20 alınmıştır.</p>
-        </div>
-
-        <div id="yuzde" class="tab-content">
-            <h2>Yüzde Hesaplama ➗</h2>
-            <p style="color:#666;">Bir sayının yüzdesini bulur.</p>
-            <div class="form-group">
-                <label>Ana Sayı</label>
-                <input type="number" id="yuzdeSayi" placeholder="Örn: 500">
-            </div>
-            <div class="form-group">
-                <label>Yüzde Kaçı?</label>
+    <script>
+        //
